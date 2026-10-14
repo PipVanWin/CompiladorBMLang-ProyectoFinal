@@ -35,7 +35,7 @@ int linea = 1;
 "}"                    { return LLAVE_CERRAR; }
 ","                    { return COMA; }
 ";"                    { return PUNTOYCOMA; }
-
+"#!"[^\n]*"!#"    { }
 "$"[a-zA-Z][a-zA-Z0-9]* { return IDENTIFICADOR; }
 [0-9]+                 { return NUMERO; }
 [ \t\r]                { }
