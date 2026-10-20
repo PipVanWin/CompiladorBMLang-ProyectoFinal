@@ -71,16 +71,19 @@ mientras : WHILE PARENTESIS_ABRIR condicion PARENTESIS_CERRAR LLAVE_ABRIR bloque
 para : FOR PARENTESIS_ABRIR asignacion PUNTOYCOMA condicion PUNTOYCOMA asignacion PARENTESIS_CERRAR LLAVE_ABRIR bloque LLAVE_CERRAR
      ;
 
-condicion : comparacion otraCondicion
+condicion : conjuncion otraCondicion
           ;
 
-otraCondicion : logico comparacion otraCondicion
+otraCondicion : OR conjuncion otraCondicion
               | vacio
               ;
 
-logico : AND
-       | OR
-       ;
+conjuncion: comparacion otraConjuncion
+              ;
+
+otraConjuncion : AND comparacion otraConjuncion
+              | vacio
+              ;
 
 comparacion : expresion operador expresion
             ;
@@ -101,13 +104,20 @@ otraExpresion : MAS termino otraExpresion
               | vacio
               ;
 
-termino : factor otroTermino
+termino : potenciacion otroTermino
         ;
 
-otroTermino : POR factor otroTermino
-            | DIVIDIR factor otroTermino
+otroTermino : POR potenciacion otroTermino
+            | DIVIDIR potenciacion otroTermino
             | vacio
             ;
+
+potenciacion : factor restoPotencia
+             ;
+
+restoPotencia : POTENCIA potenciacion
+              | vacio
+              ;
 
 factor : IDENTIFICADOR
        | NUMERO
