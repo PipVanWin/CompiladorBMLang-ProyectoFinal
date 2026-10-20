@@ -35,7 +35,6 @@ opciones : declaracion
          | lectura
          | escritura
          | asignacion
-         | potencia
          ;
 
 declaracion : DEC IDENTIFICADOR otraVariable
@@ -53,9 +52,6 @@ escritura : WRITE IDENTIFICADOR
 
 asignacion : IDENTIFICADOR ASIGNACION expresion
            ;
-
-potencia : IDENTIFICADOR POTENCIA expresion
-         ;
 
 condicional : IF PARENTESIS_ABRIR condicion PARENTESIS_CERRAR LLAVE_ABRIR bloque LLAVE_CERRAR otroElse
             ;
