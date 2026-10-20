@@ -20,6 +20,11 @@ typedef struct Nodo {
 
 Nodo *crearNodo(TipoNodo tipo, Nodo *a, Nodo *b, Nodo *c, Nodo *d);
 
+Nodo *nodoNumero(int valor);
+Nodo *nodoVariable(char *nombre);
+Nodo *nodoOp(int op, Nodo *izq, Nodo *der);
+void imprimirArbol(Nodo *n, int nivel);
+
 #endif
 
 /* Todo esto hace que el archivo no se incluya dos veces y pueda dar error 
