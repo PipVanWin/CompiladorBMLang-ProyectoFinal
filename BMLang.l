@@ -1,6 +1,8 @@
 %{
 #include "BMLang.tab.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 int linea = 1;
 %}
@@ -36,8 +38,8 @@ int linea = 1;
 ","                    { return COMA; }
 ";"                    { return PUNTOYCOMA; }
 "#!"[^\n]*"!#"    { }
-"$"[a-zA-Z][a-zA-Z0-9]* { return IDENTIFICADOR; }
-[0-9]+                 { return NUMERO; }
+"$"[a-zA-Z][a-zA-Z0-9]* { yylval.nombre = strdup(yytext); return IDENTIFICADOR; }
+[0-9]+                 { yylval.valor = atoi(yytext); return NUMERO; }
 [ \t\r]                { }
 \n                     { linea++; }
 .                      { return INVALIDO; }
