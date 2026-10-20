@@ -1,3 +1,7 @@
+%code requires {
+#include "ast.h"
+}
+
 %{
 #include <stdio.h>
 
@@ -6,12 +10,23 @@ void yyerror(char *mensaje);
 extern int linea;
 extern char *yytext;
 extern int yychar;
+
 %}
 
+%union {
+    int valor;
+    char *nombre;
+    Nodo *nodo;
+}
+
 %token MAIN DEC READ WRITE IF ELSE WHILE FOR
-%token IDENTIFICADOR NUMERO MENORIGUAL MAYORIGUAL IGUAL DIFERENTE
+%token <nombre> IDENTIFICADOR 
+%token <valor> NUMERO
+%token MENORIGUAL MAYORIGUAL IGUAL DIFERENTE
 %token AND OR MENOR MAYOR MAS MENOS POR DIVIDIR POTENCIA
 %token PARENTESIS_ABRIR PARENTESIS_CERRAR LLAVE_ABRIR LLAVE_CERRAR COMA PUNTOYCOMA INVALIDO ASIGNACION
+
+%type <nodo> expresion termino potenciacion factor
 
 %%
 
@@ -50,7 +65,7 @@ lectura : READ IDENTIFICADOR
 escritura : WRITE IDENTIFICADOR
           ;
 
-asignacion : IDENTIFICADOR ASIGNACION expresion
+asignacion : IDENTIFICADOR ASIGNACION expresion { printf("%s =>\n", $1); imprimirArbol($3, 1); }
            ;
 
 condicional : IF PARENTESIS_ABRIR condicion PARENTESIS_CERRAR LLAVE_ABRIR bloque LLAVE_CERRAR otroElse
@@ -92,33 +107,24 @@ operador : MENOR
          | DIFERENTE
          ;
 
-expresion : termino otraExpresion
+expresion : expresion MAS termino      { $$ = nodoOp('+', $1, $3); }
+          | expresion MENOS termino    { $$ = nodoOp('-', $1, $3); }
+          | termino                    { $$ = $1; }
           ;
 
-otraExpresion : MAS termino otraExpresion
-              | MENOS termino otraExpresion
-              | vacio
-              ;
-
-termino : potenciacion otroTermino
+termino : termino POR potenciacion     { $$ = nodoOp('*', $1, $3); }
+        | termino DIVIDIR potenciacion { $$ = nodoOp('/', $1, $3); }
+        | potenciacion                 { $$ = $1; }
         ;
 
-otroTermino : POR potenciacion otroTermino
-            | DIVIDIR potenciacion otroTermino
-            | vacio
-            ;
-
-potenciacion : factor restoPotencia
+potenciacion : factor POTENCIA potenciacion { $$ = nodoOp(':', $1, $3); }
+             | factor                       { $$ = $1; }
              ;
 
-restoPotencia : POTENCIA potenciacion
-              | vacio
-              ;
-
-factor : IDENTIFICADOR
-       | NUMERO
-       | MENOS NUMERO
-       | PARENTESIS_ABRIR expresion PARENTESIS_CERRAR
+factor : IDENTIFICADOR   { $$ = nodoVariable($1); }
+       | NUMERO          { $$ = nodoNumero($1); }
+       | MENOS factor    { $$ = crearNodo(N_NEGACION, $2, NULL, NULL, NULL); }
+       | PARENTESIS_ABRIR expresion PARENTESIS_CERRAR { $$ = $2; }
        ;
 
 vacio : ;
