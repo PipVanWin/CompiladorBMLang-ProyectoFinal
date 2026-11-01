@@ -22,12 +22,16 @@ typedef struct Nodo {
     struct Nodo *sig;
 } Nodo;
 
+extern Nodo *raiz;
+ 
 Nodo *crearNodo(TipoNodo tipo, Nodo *a, Nodo *b, Nodo *c, Nodo *d);
-
 Nodo *nodoNumero(int valor);
 Nodo *nodoVariable(char *nombre);
 Nodo *nodoOp(int op, Nodo *izq, Nodo *der);
+Nodo *nodoComparacion(int op, Nodo *izq, Nodo *der);
 void imprimirArbol(Nodo *n, int nivel);
+ 
+#endif
 
 #endif
 
