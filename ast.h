@@ -8,6 +8,10 @@ typedef enum {
     N_OPBIN, N_NEGACION, N_NUMERO, N_VARIABLE
 } TipoNodo;
 
+typedef enum {
+    OP_MENOR, OP_MAYOR, OP_MENORIGUAL, OP_IGUAL, OP_DIFERENTE
+} OpRel;
+
 typedef struct Nodo {
     TipoNodo tipo;
     int linea;
