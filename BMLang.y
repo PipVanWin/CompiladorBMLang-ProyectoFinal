@@ -27,6 +27,7 @@ extern int yychar;
 %token PARENTESIS_ABRIR PARENTESIS_CERRAR LLAVE_ABRIR LLAVE_CERRAR COMA PUNTOYCOMA INVALIDO ASIGNACION
 
 %type <nodo> expresion termino potenciacion factor
+%type <valor> operador
 
 %%
 
@@ -99,12 +100,12 @@ otraConjuncion : AND comparacion otraConjuncion
 comparacion : expresion operador expresion
             ;
 
-operador : MENOR
-         | MAYOR
-         | MENORIGUAL
-         | MAYORIGUAL
-         | IGUAL
-         | DIFERENTE
+operador : MENOR        { $$ = OP_MENOR; }
+         | MAYOR        { $$ = OP_MAYOR; }
+         | MENORIGUAL   { $$ = OP_MENORIGUAL; }
+         | MAYORIGUAL   { $$ = OP_MAYORIGUAL; }
+         | IGUAL        { $$ = OP_IGUAL; }
+         | DIFERENTE    { $$ = OP_DIFERENTE; }
          ;
 
 expresion : expresion MAS termino      { $$ = nodoOp('+', $1, $3); }
