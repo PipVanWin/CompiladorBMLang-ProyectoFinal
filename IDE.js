@@ -1,17 +1,8 @@
-/* =========================================================
-   BMLang IDE
-   Universidad Mesoamericana
-   Proyecto de Compiladores - 2026
-========================================================= */
 
-
-/* =========================================================
-   1. VARIABLES GLOBALES
-========================================================= */
 
 let codigoFuente = "";
 let archivoActual = "programa.bml";
-// Dirección del backend de BMLang
+
 const API_BASE = "http://localhost:3000/api";
 
 let tokens = [];
@@ -86,9 +77,6 @@ async function compilarEnBackend(codigo, modo) {
 
 
 
-/* =========================================================
-   2. REFERENCIAS HTML
-========================================================= */
 
 const editor = document.getElementById("codeEditor");
 
@@ -103,9 +91,6 @@ const nasmOutput = document.getElementById("nasmOutput");
 const consoleLog = document.getElementById("consoleLog");
 
 
-/* =========================================================
-   3. INICIALIZACIÓN
-========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -120,9 +105,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-/* =========================================================
-   4. CONSOLA
-========================================================= */
 
 function logConsole(mensaje, tipo = "info") {
 
@@ -167,9 +149,7 @@ function clearConsole() {
 }
 
 
-/* =========================================================
-   5. ESTADÍSTICAS DEL EDITOR
-========================================================= */
+
 
 function updateEditorStats() {
 
@@ -204,9 +184,7 @@ function actualizarNumerosLinea() {
 }
 
 
-/* =========================================================
-   6. ARCHIVO NUEVO
-========================================================= */
+
 
 function newFile() {
 
@@ -261,9 +239,7 @@ function reiniciarResultados() {
 }
 
 
-/* =========================================================
-   7. ABRIR ARCHIVO BML
-========================================================= */
+
 
 function openFile(event) {
 
@@ -313,9 +289,7 @@ function openFile(event) {
 }
 
 
-/* =========================================================
-   8. GUARDAR ARCHIVO BML
-========================================================= */
+
 
 function saveFile() {
 
@@ -346,9 +320,6 @@ function saveFile() {
 }
 
 
-/* =========================================================
-   9. CARGAR EJEMPLOS
-========================================================= */
 
 function loadSampleCode(ejemplo) {
 
@@ -449,9 +420,7 @@ MAIN {
 }
 
 
-/* =========================================================
-   10. SISTEMA DE PESTAÑAS
-========================================================= */
+
 
 function switchTab(tabId) {
 
@@ -514,9 +483,7 @@ function switchTab(tabId) {
 }
 
 
-/* =========================================================
-   11. MODAL DE INTEGRANTES
-========================================================= */
+
 
 function toggleModal(mostrar) {
 
@@ -527,9 +494,7 @@ function toggleModal(mostrar) {
 }
 
 
-/* =========================================================
-   12. COPIAR CÓDIGO
-========================================================= */
+
 
 async function copyToClipboard(elementId) {
 
@@ -691,9 +656,7 @@ function analizarLexico(codigo) {
 }
 
 
-/* =========================================================
-   14. MOSTRAR TOKENS
-========================================================= */
+
 
 function mostrarTokens(lista) {
 
@@ -749,16 +712,7 @@ function mostrarTokens(lista) {
 }
 
 
-/* =========================================================
-   15. ANÁLISIS SINTÁCTICO PRELIMINAR
-========================================================= */
 
-/*
-   La validación sintáctica definitiva debe realizarse
-   utilizando Bison y la gramática BMLang.y.
-
-   Esta función solo comprueba algunos elementos básicos.
-*/
 
 function validarEstructura(codigo) {
 
@@ -827,16 +781,7 @@ function validarEstructura(codigo) {
 }
 
 
-/* =========================================================
-   16. GENERADOR AST PRELIMINAR
-========================================================= */
 
-/*
-   El AST real se genera en C mediante Bison y ast.c.
-
-   Esta salida es únicamente ilustrativa y NO reemplaza
-   el árbol sintáctico generado por tu compilador.
-*/
 
 async function generarAST() {
 
@@ -879,16 +824,7 @@ async function generarAST() {
 
 }
 
-/* =========================================================
-   17. PIPELINE DE COMPILACIÓN
-========================================================= */
 
-/*
-   Esta versión no ejecuta Flex, Bison ni NASM.
-
-   Se prepara la interfaz para conectar el compilador
-   real mediante un backend.
-*/
 
 async function compilePipeline(tipo) {
 
@@ -903,7 +839,7 @@ async function compilePipeline(tipo) {
         return;
     }
 
-    // Generación de C3D
+   
     if (tipo === "c3d") {
 
         logConsole("Generando código de tres direcciones...", "info");
@@ -933,8 +869,7 @@ async function compilePipeline(tipo) {
         return;
     }
 
-    // Generación NASM
-    // Generación NASM
+    
 if (tipo === "nasm") {
 
     logConsole("Generando código ensamblador NASM...", "info");
@@ -965,10 +900,83 @@ if (tipo === "nasm") {
 
     return;
 }
-    
+    if (tipo === "run") {
+
+    logConsole("Compilando y ejecutando programa...", "info");
+
+    switchTab("consoleTab");
+
+    try {
+
+        const respuesta = await fetch(`${API_BASE}/run`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                code: codigo
+            })
+        });
+
+        const resultado = await respuesta.json();
+
+        if (!resultado.success) {
+
+            logConsole(
+                resultado.errors ||
+                resultado.message ||
+                "Error durante la ejecución.",
+                "error"
+            );
+
+            if (resultado.output) {
+                logConsole(resultado.output, "info");
+            }
+
+            return;
+        }
+
+       
+        if (resultado.output) {
+
+            logConsole(
+                resultado.output,
+                "success"
+            );
+
+        } else {
+
+            logConsole(
+                "El programa terminó correctamente, pero no produjo salida.",
+                "info"
+            );
+        }
+
+        
+        if (resultado.errors) {
+            logConsole(resultado.errors, "warning");
+        }
+
+        logConsole(
+            "Ejecución finalizada correctamente.",
+            "success"
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+        logConsole(
+            "No se pudo conectar con el backend.",
+            "error"
+        );
+    }
+
+    return;
+}
 
 
-    // Generación del ejecutable
+   
    if (tipo === "build") {
 
     logConsole("Iniciando compilación del ejecutable...", "info");
@@ -977,7 +985,7 @@ if (tipo === "nasm") {
 
     try {
 
-        // Enviar el código al backend
+        
         const respuesta = await fetch(`${API_BASE}/build`, {
             method: "POST",
             headers: {
@@ -988,7 +996,7 @@ if (tipo === "nasm") {
             })
         });
 
-        // Comprobar si ocurrió un error
+        
         if (!respuesta.ok) {
 
             const error = await respuesta.json();
@@ -1001,13 +1009,13 @@ if (tipo === "nasm") {
             return;
         }
 
-        // Recibir el ejecutable
+        
         const archivo = await respuesta.blob();
 
-        // Crear una URL temporal
+       
         const url = window.URL.createObjectURL(archivo);
 
-        // Crear enlace de descarga
+        
         const enlace = document.createElement("a");
 
         enlace.href = url;
@@ -1017,7 +1025,7 @@ if (tipo === "nasm") {
 
         enlace.click();
 
-        // Limpiar recursos
+        
         enlace.remove();
 
         window.URL.revokeObjectURL(url);

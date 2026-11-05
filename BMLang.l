@@ -5,6 +5,7 @@
 #include <string.h>
 
 int linea = 1;
+int registrarTokens = 0;
 %}
 
 %%

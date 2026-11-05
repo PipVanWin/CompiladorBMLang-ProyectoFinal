@@ -13,6 +13,7 @@
 int yylex();
 void yyerror(char *mensaje);
 extern int linea;
+extern int registrarTokens;
 extern char *yytext;
 extern int yychar;
 
@@ -287,7 +288,7 @@ int main(int argc, char **argv){
     fuente = leerTodo(entrada);
     if (entrada != stdin) fclose(entrada);
 
-    yy_scan_string(fuente);                 /* el lexer leera de "fuente" */
+    yy_scan_string(fuente);                 
     r = yyparse();
     if (r != 0) return r;
     if (verNASM) {

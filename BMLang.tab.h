@@ -99,7 +99,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 21 "BMLang.y"
+#line 22 "BMLang.y"
 
     int valor;
     char *nombre;

@@ -12,17 +12,16 @@ const ejecutarArchivo = promisify(execFile);
 const app = express();
 const PORT = 3000;
 
-// Middlewares
+
 app.use(cors());
 app.use(express.json({ limit: '1mb' }));
 
-// Ubicación del compilador en C
+
 const COMPILADOR = path.resolve(__dirname, '..', 'compilador');
 const NASM = 'nasm';
 const LINKER = 'ld';
 
 async function generarEjecutable(codigo) {
-
     let directorioTemporal;
 
     try {
@@ -51,10 +50,10 @@ async function generarEjecutable(codigo) {
             'programa'
         );
 
-        // 1. Guardar código fuente
+       
         await fs.writeFile(archivoFuente, codigo, 'utf8');
 
-        // 2. Generar NASM
+        
         const resultadoNASM = await ejecutarArchivo(
             COMPILADOR,
             [archivoFuente, '--nasm'],
@@ -71,56 +70,70 @@ async function generarEjecutable(codigo) {
             'utf8'
         );
 
-        // 3. Ensamblar
+       
         await ejecutarArchivo(
             NASM,
-            ['-f', 'elf32', archivoASM, '-o', archivoObjeto],
+            [
+                '-f',
+                'elf32',
+                archivoASM,
+                '-o',
+                archivoObjeto
+            ],
             {
                 timeout: 10000,
                 maxBuffer: 1024 * 1024
             }
         );
 
-        // 4. Generar ejecutable
+        
         await ejecutarArchivo(
             LINKER,
-            ['-m', 'elf_i386', archivoObjeto, '-o', archivoEjecutable],
+            [
+                '-m',
+                'elf_i386',
+                archivoObjeto,
+                '-o',
+                archivoEjecutable
+            ],
             {
                 timeout: 10000,
                 maxBuffer: 1024 * 1024
             }
         );
 
+        
         return {
             success: true,
             message: 'Ejecutable generado correctamente.',
-            nasm: resultadoNASM.stdout
+            nasm: resultadoNASM.stdout,
+            directorioTemporal,
+            archivoEjecutable
         };
 
-    } finally {
+    } catch (error) {
 
+       
         if (directorioTemporal) {
-
             await fs.rm(directorioTemporal, {
                 recursive: true,
                 force: true
             });
-
         }
 
+        throw error;
     }
-
 }
 
 
-// Ruta principal
+
 app.get('/', (req, res) => {
     res.json({
         mensaje: 'Backend de BMLang funcionando correctamente'
     });
 });
 
-// Endpoint para compilar código
+
 app.post('/api/compile', async (req, res) => {
     const { code, mode = 'tac' } = req.body;
 
@@ -219,7 +232,76 @@ app.post('/api/build', async (req, res) => {
 
 });
 
-// Iniciar servidor
+app.post('/api/run', async (req, res) => {
+
+    const { code } = req.body;
+
+    if (typeof code !== 'string' || code.trim() === '') {
+        return res.status(400).json({
+            success: false,
+            message: 'No se recibió código BMLang.'
+        });
+    }
+
+    let resultado;
+
+    try {
+
+       
+        resultado = await generarEjecutable(code);
+
+console.log("Resultado de generarEjecutable:", resultado);
+
+if (
+    !resultado ||
+    typeof resultado.archivoEjecutable !== 'string'
+) {
+    throw new Error(
+        'No se recibió una ruta válida del ejecutable.'
+    );
+}
+
+const ejecucion = await ejecutarArchivo(
+    resultado.archivoEjecutable,
+    [],
+    {
+        timeout: 5000,
+        maxBuffer: 1024 * 1024,
+        encoding: 'utf8'
+    }
+);
+        
+
+        res.json({
+            success: true,
+            output: ejecucion.stdout,
+            errors: ejecucion.stderr
+        });
+
+    } catch (error) {
+
+        res.status(422).json({
+            success: false,
+            output: error.stdout || '',
+            errors: error.stderr || '',
+            message: error.killed
+                ? 'El programa superó el tiempo máximo de ejecución.'
+                : error.message
+        });
+
+    } finally {
+
+       
+        if (resultado?.directorioTemporal) {
+            await fs.rm(resultado.directorioTemporal, {
+                recursive: true,
+                force: true
+            });
+        }
+    }
+});
+
+
 app.listen(PORT, () => {
     console.log(`Servidor BMLang ejecutándose en http://localhost:${PORT}`);
 });

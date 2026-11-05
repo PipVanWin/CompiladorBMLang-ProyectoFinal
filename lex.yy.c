@@ -494,8 +494,9 @@ char *yytext;
 #include <string.h>
 
 int linea = 1;
-#line 498 "lex.yy.c"
+int registrarTokens = 0;
 #line 499 "lex.yy.c"
+#line 500 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -712,10 +713,10 @@ YY_DECL
 		}
 
 	{
-#line 10 "BMLang.l"
+#line 11 "BMLang.l"
 
 
-#line 719 "lex.yy.c"
+#line 720 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -774,181 +775,181 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 12 "BMLang.l"
+#line 13 "BMLang.l"
 { return MAIN; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 13 "BMLang.l"
+#line 14 "BMLang.l"
 { return DEC; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 14 "BMLang.l"
+#line 15 "BMLang.l"
 { return READ; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 15 "BMLang.l"
+#line 16 "BMLang.l"
 { return WRITE; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 16 "BMLang.l"
+#line 17 "BMLang.l"
 { return IF; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 17 "BMLang.l"
+#line 18 "BMLang.l"
 { return ELSE; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 18 "BMLang.l"
+#line 19 "BMLang.l"
 { return WHILE; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 19 "BMLang.l"
+#line 20 "BMLang.l"
 { return FOR; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 20 "BMLang.l"
+#line 21 "BMLang.l"
 { return ASIGNACION; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 21 "BMLang.l"
+#line 22 "BMLang.l"
 { return MENORIGUAL; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 22 "BMLang.l"
+#line 23 "BMLang.l"
 { return MAYORIGUAL; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 23 "BMLang.l"
+#line 24 "BMLang.l"
 { return IGUAL; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 24 "BMLang.l"
+#line 25 "BMLang.l"
 { return DIFERENTE; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 25 "BMLang.l"
+#line 26 "BMLang.l"
 { return AND; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 26 "BMLang.l"
+#line 27 "BMLang.l"
 { return OR; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 27 "BMLang.l"
+#line 28 "BMLang.l"
 { return MENOR; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 28 "BMLang.l"
+#line 29 "BMLang.l"
 { return MAYOR; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 29 "BMLang.l"
+#line 30 "BMLang.l"
 { return MAS; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 30 "BMLang.l"
+#line 31 "BMLang.l"
 { return MENOS; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 31 "BMLang.l"
+#line 32 "BMLang.l"
 { return POR; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 32 "BMLang.l"
+#line 33 "BMLang.l"
 { return DIVIDIR; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 33 "BMLang.l"
+#line 34 "BMLang.l"
 { return POTENCIA; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 34 "BMLang.l"
+#line 35 "BMLang.l"
 { return PARENTESIS_ABRIR; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 35 "BMLang.l"
+#line 36 "BMLang.l"
 { return PARENTESIS_CERRAR; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 36 "BMLang.l"
+#line 37 "BMLang.l"
 { return LLAVE_ABRIR; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 37 "BMLang.l"
+#line 38 "BMLang.l"
 { return LLAVE_CERRAR; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 38 "BMLang.l"
+#line 39 "BMLang.l"
 { return COMA; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 39 "BMLang.l"
+#line 40 "BMLang.l"
 { return PUNTOYCOMA; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 40 "BMLang.l"
+#line 41 "BMLang.l"
 { }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 41 "BMLang.l"
+#line 42 "BMLang.l"
 { yylval.nombre = strdup(yytext); return IDENTIFICADOR; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 42 "BMLang.l"
+#line 43 "BMLang.l"
 { yylval.valor = atoi(yytext); return NUMERO; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 43 "BMLang.l"
+#line 44 "BMLang.l"
 { }
 	YY_BREAK
 case 33:
 /* rule 33 can match eol */
 YY_RULE_SETUP
-#line 44 "BMLang.l"
+#line 45 "BMLang.l"
 { linea++; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 45 "BMLang.l"
+#line 46 "BMLang.l"
 { return INVALIDO; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 47 "BMLang.l"
+#line 48 "BMLang.l"
 ECHO;
 	YY_BREAK
-#line 952 "lex.yy.c"
+#line 953 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1953,7 +1954,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 47 "BMLang.l"
+#line 48 "BMLang.l"
 
 
 int yywrap(){

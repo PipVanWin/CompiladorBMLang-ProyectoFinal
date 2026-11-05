@@ -95,6 +95,11 @@
             }
         }
     </style>
+    <img
+    src="assets/images.png"
+    alt="Universidad Mesoamericana"
+    class="h-12 w-auto object-contain"
+    >
 </head>
 
 <body class="h-screen flex flex-col overflow-hidden bg-slate-900 text-slate-100">
@@ -136,38 +141,6 @@
         <div class="flex items-center gap-2">
 
            
-            <div class="relative">
-
-                <select
-                    id="sampleSelect"
-                    onchange="loadSampleCode(this.value)"
-                    aria-label="Seleccionar ejemplo de BMLang"
-                    class="bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 border border-slate-700 rounded-md px-3 py-2 font-medium transition cursor-pointer outline-none focus:border-amber-500">
-
-                    <option value="" disabled selected>
-                        -- Cargar Ejemplo --
-                    </option>
-
-                    <option value="ex1">
-                        Ejemplo 1: Operaciones Básicas e I/O
-                    </option>
-
-                    <option value="ex2">
-                        Ejemplo 2: Sentencia IF-ELSE
-                    </option>
-
-                    <option value="ex3">
-                        Ejemplo 3: Ciclo FOR y Acumulador
-                    </option>
-
-                    <option value="ex4">
-                        Ejemplo 4: Ciclo WHILE y Potencia
-                    </option>
-
-                </select>
-
-            </div>
-
             
             <button
                 onclick="toggleModal(true)"
@@ -265,14 +238,14 @@
             </button>
 
             <button
-                onclick="runInterpreter()"
-                class="px-3 py-2 bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold rounded shadow transition flex items-center gap-2">
+    onclick="compilePipeline('run')"
+    class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition">
+    <i class="fa-solid fa-play"></i>
+    Ejecutar
+   </button>
 
-                <i class="fa-solid fa-play"></i>
 
-                Interpretar C3D
-
-            </button>
+           
 
         </div>
 
@@ -411,17 +384,7 @@ MAIN {
 
 
                 
-                <button
-                    onclick="switchTab('lexicalTab')"
-                    id="btn-lexicalTab"
-                    class="tab-btn px-4 py-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 transition">
-
-                    <i class="fa-solid fa-magnifying-glass"></i>
-
-                    Léxico
-
-                </button>
-
+               
 
                 
                 <button
@@ -542,104 +505,7 @@ MAIN {
 
                 
 
-                <div
-                    id="lexicalTab"
-                    class="tab-content hidden h-full flex flex-col p-3 min-h-0">
-
-                    <div class="mb-3">
-
-                        <h3 class="text-sm font-semibold text-amber-300">
-
-                            <i class="fa-solid fa-magnifying-glass"></i>
-
-                            Analizador Léxico
-
-                        </h3>
-
-                        <p class="text-[11px] text-slate-500 mt-1">
-                            Identificación de tokens mediante Flex.
-                        </p>
-
-                    </div>
-
-
-                    
-                    <div class="grid grid-cols-3 gap-2 mb-3">
-
-                        <div class="bg-slate-900 border border-slate-800 rounded-lg p-3">
-
-                            <span class="block text-[10px] text-slate-500 uppercase">
-                                Analizador
-                            </span>
-
-                            <span class="text-sm text-amber-400 font-semibold">
-                                Flex
-                            </span>
-
-                        </div>
-
-                        <div class="bg-slate-900 border border-slate-800 rounded-lg p-3">
-
-                            <span class="block text-[10px] text-slate-500 uppercase">
-                                Lenguaje
-                            </span>
-
-                            <span class="text-sm text-blue-400 font-semibold">
-                                BMLang
-                            </span>
-
-                        </div>
-
-                        <div class="bg-slate-900 border border-slate-800 rounded-lg p-3">
-
-                            <span class="block text-[10px] text-slate-500 uppercase">
-                                Tokens
-                            </span>
-
-                            <span class="text-sm text-emerald-400 font-semibold">
-                                Pendiente
-                            </span>
-
-                        </div>
-
-                    </div>
-
-
-                   
-                    <div class="flex-1 overflow-auto bg-slate-900 border border-slate-800 rounded-lg">
-
-                        <table class="token-table w-full text-xs">
-
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Lexema</th>
-                                    <th>Token</th>
-                                    <th>Línea</th>
-                                </tr>
-                            </thead>
-
-                            <tbody id="tokenTableBody">
-
-                                <tr>
-                                    <td colspan="4"
-                                        class="text-center text-slate-500 py-8">
-
-                                        <i class="fa-solid fa-code text-2xl mb-3 block"></i>
-
-                                        Los tokens aparecerán aquí cuando se integre
-                                        el analizador léxico.
-
-                                    </td>
-                                </tr>
-
-                            </tbody>
-
-                        </table>
-
-                    </div>
-
-                </div>
+                
 
 
                 
@@ -1072,7 +938,47 @@ MAIN {
 
                     </div>
 
+                     <div>
+
+                            <p class="text-sm font-semibold text-slate-100">
+                                Estuardo Saul De Leon Tzoc
+                                
+                            </p>
+
+                            <p class="text-xs text-amber-400">
+                                Ingeniería en Sistemas
+                            </p>
+
+                        </div>
+
+                        <span
+                            class="text-xs font-mono bg-slate-800 text-slate-300 px-2 py-1 rounded">
+
+                            202408033
+
+                        </span>
+
                 </div>
+
+                 <div>
+
+                            <p class="text-sm font-semibold text-slate-100">
+                                Marcos Josue Garcia Maldonado
+                                
+                            </p>
+
+                            <p class="text-xs text-amber-400">
+                                Ingeniería en Sistemas
+                            </p>
+
+                        </div>
+
+                        <span
+                            class="text-xs font-mono bg-slate-800 text-slate-300 px-2 py-1 rounded">
+
+                            202408055
+
+                        </span>
 
             </div>
 

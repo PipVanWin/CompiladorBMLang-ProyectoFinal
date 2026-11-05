@@ -79,11 +79,12 @@
 int yylex();
 void yyerror(char *mensaje);
 extern int linea;
+extern int registrarTokens;
 extern char *yytext;
 extern int yychar;
 
 
-#line 87 "BMLang.tab.c"
+#line 88 "BMLang.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -557,11 +558,11 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    43,    43,    50,    53,    54,    57,    58,    59,    60,
-      63,    64,    65,    66,    69,    77,    83,    86,    90,    94,
-      98,   102,   103,   104,   107,   111,   115,   116,   119,   120,
-     123,   127,   128,   129,   130,   131,   132,   134,   135,   136,
-     139,   140,   141,   144,   145,   148,   149,   150,   151,   153
+       0,    44,    44,    51,    54,    55,    58,    59,    60,    61,
+      64,    65,    66,    67,    70,    78,    84,    87,    91,    95,
+      99,   103,   104,   105,   108,   112,   116,   117,   120,   121,
+     124,   128,   129,   130,   131,   132,   133,   135,   136,   137,
+     140,   141,   142,   145,   146,   149,   150,   151,   152,   154
 };
 #endif
 
@@ -1186,299 +1187,299 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* inicio: MAIN LLAVE_ABRIR bloque LLAVE_CERRAR  */
-#line 44 "BMLang.y"
+#line 45 "BMLang.y"
            {
                raiz = crearNodo(N_PROGRAMA, (yyvsp[-1].nodo), NULL, NULL, NULL);
            }
-#line 1194 "BMLang.tab.c"
+#line 1195 "BMLang.tab.c"
     break;
 
   case 3: /* bloque: sentencia otraSentencia  */
-#line 50 "BMLang.y"
+#line 51 "BMLang.y"
                                    { (yyvsp[-1].nodo)->sig = (yyvsp[0].nodo); (yyval.nodo) = (yyvsp[-1].nodo); }
-#line 1200 "BMLang.tab.c"
+#line 1201 "BMLang.tab.c"
     break;
 
   case 4: /* otraSentencia: sentencia otraSentencia  */
-#line 53 "BMLang.y"
+#line 54 "BMLang.y"
                                           { (yyvsp[-1].nodo)->sig = (yyvsp[0].nodo); (yyval.nodo) = (yyvsp[-1].nodo); }
-#line 1206 "BMLang.tab.c"
+#line 1207 "BMLang.tab.c"
     break;
 
   case 5: /* otraSentencia: vacio  */
-#line 54 "BMLang.y"
+#line 55 "BMLang.y"
                                           { (yyval.nodo) = NULL; }
-#line 1212 "BMLang.tab.c"
+#line 1213 "BMLang.tab.c"
     break;
 
   case 6: /* sentencia: opciones PUNTOYCOMA  */
-#line 57 "BMLang.y"
+#line 58 "BMLang.y"
                                   { (yyval.nodo) = (yyvsp[-1].nodo); }
-#line 1218 "BMLang.tab.c"
+#line 1219 "BMLang.tab.c"
     break;
 
   case 7: /* sentencia: condicional  */
-#line 58 "BMLang.y"
+#line 59 "BMLang.y"
                                   { (yyval.nodo) = (yyvsp[0].nodo); }
-#line 1224 "BMLang.tab.c"
+#line 1225 "BMLang.tab.c"
     break;
 
   case 8: /* sentencia: mientras  */
-#line 59 "BMLang.y"
+#line 60 "BMLang.y"
                                   { (yyval.nodo) = (yyvsp[0].nodo); }
-#line 1230 "BMLang.tab.c"
+#line 1231 "BMLang.tab.c"
     break;
 
   case 9: /* sentencia: para  */
-#line 60 "BMLang.y"
+#line 61 "BMLang.y"
                                   { (yyval.nodo) = (yyvsp[0].nodo); }
-#line 1236 "BMLang.tab.c"
+#line 1237 "BMLang.tab.c"
     break;
 
   case 10: /* opciones: declaracion  */
-#line 63 "BMLang.y"
+#line 64 "BMLang.y"
                          { (yyval.nodo) = (yyvsp[0].nodo); }
-#line 1242 "BMLang.tab.c"
+#line 1243 "BMLang.tab.c"
     break;
 
   case 11: /* opciones: lectura  */
-#line 64 "BMLang.y"
+#line 65 "BMLang.y"
                          { (yyval.nodo) = (yyvsp[0].nodo); }
-#line 1248 "BMLang.tab.c"
+#line 1249 "BMLang.tab.c"
     break;
 
   case 12: /* opciones: escritura  */
-#line 65 "BMLang.y"
+#line 66 "BMLang.y"
                          { (yyval.nodo) = (yyvsp[0].nodo); }
-#line 1254 "BMLang.tab.c"
+#line 1255 "BMLang.tab.c"
     break;
 
   case 13: /* opciones: asignacion  */
-#line 66 "BMLang.y"
+#line 67 "BMLang.y"
                          { (yyval.nodo) = (yyvsp[0].nodo); }
-#line 1260 "BMLang.tab.c"
+#line 1261 "BMLang.tab.c"
     break;
 
   case 14: /* declaracion: DEC IDENTIFICADOR otraVariable  */
-#line 70 "BMLang.y"
+#line 71 "BMLang.y"
                 {
                     Nodo *v = nodoVariable((yyvsp[-1].nombre));
                     v->sig = (yyvsp[0].nodo);
                     (yyval.nodo) = crearNodo(N_DECLARACION, v, NULL, NULL, NULL);
                 }
-#line 1270 "BMLang.tab.c"
+#line 1271 "BMLang.tab.c"
     break;
 
   case 15: /* otraVariable: COMA IDENTIFICADOR otraVariable  */
-#line 78 "BMLang.y"
+#line 79 "BMLang.y"
                  {
                      Nodo *v = nodoVariable((yyvsp[-1].nombre));
                      v->sig = (yyvsp[0].nodo);
                      (yyval.nodo) = v;
                  }
-#line 1280 "BMLang.tab.c"
+#line 1281 "BMLang.tab.c"
     break;
 
   case 16: /* otraVariable: vacio  */
-#line 83 "BMLang.y"
+#line 84 "BMLang.y"
                        { (yyval.nodo) = NULL; }
-#line 1286 "BMLang.tab.c"
+#line 1287 "BMLang.tab.c"
     break;
 
   case 17: /* lectura: READ IDENTIFICADOR  */
-#line 87 "BMLang.y"
+#line 88 "BMLang.y"
             { (yyval.nodo) = crearNodo(N_READ, nodoVariable((yyvsp[0].nombre)), NULL, NULL, NULL); }
-#line 1292 "BMLang.tab.c"
+#line 1293 "BMLang.tab.c"
     break;
 
   case 18: /* escritura: WRITE IDENTIFICADOR  */
-#line 91 "BMLang.y"
+#line 92 "BMLang.y"
               { (yyval.nodo) = crearNodo(N_WRITE, nodoVariable((yyvsp[0].nombre)), NULL, NULL, NULL); }
-#line 1298 "BMLang.tab.c"
+#line 1299 "BMLang.tab.c"
     break;
 
   case 19: /* asignacion: IDENTIFICADOR ASIGNACION expresion  */
-#line 95 "BMLang.y"
+#line 96 "BMLang.y"
                { (yyval.nodo) = crearNodo(N_ASIGNACION, nodoVariable((yyvsp[-2].nombre)), (yyvsp[0].nodo), NULL, NULL); }
-#line 1304 "BMLang.tab.c"
+#line 1305 "BMLang.tab.c"
     break;
 
   case 20: /* condicional: IF PARENTESIS_ABRIR condicion PARENTESIS_CERRAR LLAVE_ABRIR bloque LLAVE_CERRAR otroElse  */
-#line 99 "BMLang.y"
+#line 100 "BMLang.y"
                 { (yyval.nodo) = crearNodo(N_IF, (yyvsp[-5].nodo), (yyvsp[-2].nodo), (yyvsp[0].nodo), NULL); }
-#line 1310 "BMLang.tab.c"
+#line 1311 "BMLang.tab.c"
     break;
 
   case 21: /* otroElse: ELSE LLAVE_ABRIR bloque LLAVE_CERRAR  */
-#line 102 "BMLang.y"
+#line 103 "BMLang.y"
                                                   { (yyval.nodo) = (yyvsp[-1].nodo); }
-#line 1316 "BMLang.tab.c"
+#line 1317 "BMLang.tab.c"
     break;
 
   case 22: /* otroElse: ELSE condicional  */
-#line 103 "BMLang.y"
+#line 104 "BMLang.y"
                                                   { (yyval.nodo) = (yyvsp[0].nodo); }
-#line 1322 "BMLang.tab.c"
+#line 1323 "BMLang.tab.c"
     break;
 
   case 23: /* otroElse: vacio  */
-#line 104 "BMLang.y"
+#line 105 "BMLang.y"
                                                   { (yyval.nodo) = NULL; }
-#line 1328 "BMLang.tab.c"
+#line 1329 "BMLang.tab.c"
     break;
 
   case 24: /* mientras: WHILE PARENTESIS_ABRIR condicion PARENTESIS_CERRAR LLAVE_ABRIR bloque LLAVE_CERRAR  */
-#line 108 "BMLang.y"
+#line 109 "BMLang.y"
              { (yyval.nodo) = crearNodo(N_WHILE, (yyvsp[-4].nodo), (yyvsp[-1].nodo), NULL, NULL); }
-#line 1334 "BMLang.tab.c"
+#line 1335 "BMLang.tab.c"
     break;
 
   case 25: /* para: FOR PARENTESIS_ABRIR asignacion PUNTOYCOMA condicion PUNTOYCOMA asignacion PARENTESIS_CERRAR LLAVE_ABRIR bloque LLAVE_CERRAR  */
-#line 112 "BMLang.y"
+#line 113 "BMLang.y"
          { (yyval.nodo) = crearNodo(N_FOR, (yyvsp[-8].nodo), (yyvsp[-6].nodo), (yyvsp[-4].nodo), (yyvsp[-1].nodo)); }
-#line 1340 "BMLang.tab.c"
+#line 1341 "BMLang.tab.c"
     break;
 
   case 26: /* condicion: condicion OR conjuncion  */
-#line 115 "BMLang.y"
+#line 116 "BMLang.y"
                                       { (yyval.nodo) = crearNodo(N_OR, (yyvsp[-2].nodo), (yyvsp[0].nodo), NULL, NULL); }
-#line 1346 "BMLang.tab.c"
+#line 1347 "BMLang.tab.c"
     break;
 
   case 27: /* condicion: conjuncion  */
-#line 116 "BMLang.y"
+#line 117 "BMLang.y"
                                       { (yyval.nodo) = (yyvsp[0].nodo); }
-#line 1352 "BMLang.tab.c"
+#line 1353 "BMLang.tab.c"
     break;
 
   case 28: /* conjuncion: conjuncion AND comparacion  */
-#line 119 "BMLang.y"
+#line 120 "BMLang.y"
                                           { (yyval.nodo) = crearNodo(N_AND, (yyvsp[-2].nodo), (yyvsp[0].nodo), NULL, NULL); }
-#line 1358 "BMLang.tab.c"
+#line 1359 "BMLang.tab.c"
     break;
 
   case 29: /* conjuncion: comparacion  */
-#line 120 "BMLang.y"
+#line 121 "BMLang.y"
                                           { (yyval.nodo) = (yyvsp[0].nodo); }
-#line 1364 "BMLang.tab.c"
+#line 1365 "BMLang.tab.c"
     break;
 
   case 30: /* comparacion: expresion operador expresion  */
-#line 124 "BMLang.y"
+#line 125 "BMLang.y"
                 { (yyval.nodo) = nodoComparacion((yyvsp[-1].valor), (yyvsp[-2].nodo), (yyvsp[0].nodo)); }
-#line 1370 "BMLang.tab.c"
+#line 1371 "BMLang.tab.c"
     break;
 
   case 31: /* operador: MENOR  */
-#line 127 "BMLang.y"
+#line 128 "BMLang.y"
                         { (yyval.valor) = OP_MENOR; }
-#line 1376 "BMLang.tab.c"
+#line 1377 "BMLang.tab.c"
     break;
 
   case 32: /* operador: MAYOR  */
-#line 128 "BMLang.y"
+#line 129 "BMLang.y"
                         { (yyval.valor) = OP_MAYOR; }
-#line 1382 "BMLang.tab.c"
+#line 1383 "BMLang.tab.c"
     break;
 
   case 33: /* operador: MENORIGUAL  */
-#line 129 "BMLang.y"
+#line 130 "BMLang.y"
                         { (yyval.valor) = OP_MENORIGUAL; }
-#line 1388 "BMLang.tab.c"
+#line 1389 "BMLang.tab.c"
     break;
 
   case 34: /* operador: MAYORIGUAL  */
-#line 130 "BMLang.y"
+#line 131 "BMLang.y"
                         { (yyval.valor) = OP_MAYORIGUAL; }
-#line 1394 "BMLang.tab.c"
+#line 1395 "BMLang.tab.c"
     break;
 
   case 35: /* operador: IGUAL  */
-#line 131 "BMLang.y"
+#line 132 "BMLang.y"
                         { (yyval.valor) = OP_IGUAL; }
-#line 1400 "BMLang.tab.c"
+#line 1401 "BMLang.tab.c"
     break;
 
   case 36: /* operador: DIFERENTE  */
-#line 132 "BMLang.y"
+#line 133 "BMLang.y"
                         { (yyval.valor) = OP_DIFERENTE; }
-#line 1406 "BMLang.tab.c"
+#line 1407 "BMLang.tab.c"
     break;
 
   case 37: /* expresion: expresion MAS termino  */
-#line 134 "BMLang.y"
+#line 135 "BMLang.y"
                                        { (yyval.nodo) = nodoOp('+', (yyvsp[-2].nodo), (yyvsp[0].nodo)); }
-#line 1412 "BMLang.tab.c"
+#line 1413 "BMLang.tab.c"
     break;
 
   case 38: /* expresion: expresion MENOS termino  */
-#line 135 "BMLang.y"
+#line 136 "BMLang.y"
                                        { (yyval.nodo) = nodoOp('-', (yyvsp[-2].nodo), (yyvsp[0].nodo)); }
-#line 1418 "BMLang.tab.c"
+#line 1419 "BMLang.tab.c"
     break;
 
   case 39: /* expresion: termino  */
-#line 136 "BMLang.y"
+#line 137 "BMLang.y"
                                        { (yyval.nodo) = (yyvsp[0].nodo); }
-#line 1424 "BMLang.tab.c"
+#line 1425 "BMLang.tab.c"
     break;
 
   case 40: /* termino: termino POR potenciacion  */
-#line 139 "BMLang.y"
+#line 140 "BMLang.y"
                                        { (yyval.nodo) = nodoOp('*', (yyvsp[-2].nodo), (yyvsp[0].nodo)); }
-#line 1430 "BMLang.tab.c"
+#line 1431 "BMLang.tab.c"
     break;
 
   case 41: /* termino: termino DIVIDIR potenciacion  */
-#line 140 "BMLang.y"
+#line 141 "BMLang.y"
                                        { (yyval.nodo) = nodoOp('/', (yyvsp[-2].nodo), (yyvsp[0].nodo)); }
-#line 1436 "BMLang.tab.c"
+#line 1437 "BMLang.tab.c"
     break;
 
   case 42: /* termino: potenciacion  */
-#line 141 "BMLang.y"
+#line 142 "BMLang.y"
                                        { (yyval.nodo) = (yyvsp[0].nodo); }
-#line 1442 "BMLang.tab.c"
+#line 1443 "BMLang.tab.c"
     break;
 
   case 43: /* potenciacion: factor POTENCIA potenciacion  */
-#line 144 "BMLang.y"
+#line 145 "BMLang.y"
                                             { (yyval.nodo) = nodoOp(':', (yyvsp[-2].nodo), (yyvsp[0].nodo)); }
-#line 1448 "BMLang.tab.c"
+#line 1449 "BMLang.tab.c"
     break;
 
   case 44: /* potenciacion: factor  */
-#line 145 "BMLang.y"
+#line 146 "BMLang.y"
                                             { (yyval.nodo) = (yyvsp[0].nodo); }
-#line 1454 "BMLang.tab.c"
+#line 1455 "BMLang.tab.c"
     break;
 
   case 45: /* factor: IDENTIFICADOR  */
-#line 148 "BMLang.y"
+#line 149 "BMLang.y"
                          { (yyval.nodo) = nodoVariable((yyvsp[0].nombre)); }
-#line 1460 "BMLang.tab.c"
+#line 1461 "BMLang.tab.c"
     break;
 
   case 46: /* factor: NUMERO  */
-#line 149 "BMLang.y"
+#line 150 "BMLang.y"
                          { (yyval.nodo) = nodoNumero((yyvsp[0].valor)); }
-#line 1466 "BMLang.tab.c"
+#line 1467 "BMLang.tab.c"
     break;
 
   case 47: /* factor: MENOS factor  */
-#line 150 "BMLang.y"
+#line 151 "BMLang.y"
                          { (yyval.nodo) = crearNodo(N_NEGACION, (yyvsp[0].nodo), NULL, NULL, NULL); }
-#line 1472 "BMLang.tab.c"
+#line 1473 "BMLang.tab.c"
     break;
 
   case 48: /* factor: PARENTESIS_ABRIR expresion PARENTESIS_CERRAR  */
-#line 151 "BMLang.y"
+#line 152 "BMLang.y"
                                                       { (yyval.nodo) = (yyvsp[-1].nodo); }
-#line 1478 "BMLang.tab.c"
+#line 1479 "BMLang.tab.c"
     break;
 
 
-#line 1482 "BMLang.tab.c"
+#line 1483 "BMLang.tab.c"
 
       default: break;
     }
@@ -1671,7 +1672,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 155 "BMLang.y"
+#line 156 "BMLang.y"
 
 
  /* Entrada del programa y mensajes de error */
@@ -1778,60 +1779,112 @@ static void sugerencia(int lineaError) {
     }
 }
 
-int main(int argc, char **argv){
+int main(int argc, char **argv) {
+
     const char *archivo = NULL;
-    int verArbol = 0, verTAC = 0;
+
+    int verArbol = 0;
+    int verTAC = 0;
     int verNASM = 0;
+    int verTokens = 0;
+
     FILE *entrada = stdin;
     int r;
 
+    // Procesar argumentos
     for (int i = 1; i < argc; i++) {
+
         if (strcmp(argv[i], "--ast") == 0) {
             verArbol = 1;
+
         } else if (strcmp(argv[i], "--tac") == 0) {
             verTAC = 1;
+
         } else if (strcmp(argv[i], "--nasm") == 0) {
             verNASM = 1;
+
+        } else if (strcmp(argv[i], "--tokens") == 0) {
+            verTokens = 1;
+
         } else {
             archivo = argv[i];
         }
-}
+    }
 
+    // Abrir archivo fuente
     if (archivo != NULL) {
+
         entrada = fopen(archivo, "rb");
+
         if (entrada == NULL) {
             printf("No se pudo abrir el archivo %s\n", archivo);
             return 2;
         }
     }
-    fuente = leerTodo(entrada);
-    if (entrada != stdin) fclose(entrada);
 
-    yy_scan_string(fuente);                 /* el lexer leera de "fuente" */
+    // Leer código fuente
+    fuente = leerTodo(entrada);
+
+    if (entrada != stdin) {
+        fclose(entrada);
+    }
+
+    // Preparar entrada para Flex
+    yy_scan_string(fuente);
+
+    // MODO ANALIZADOR LEXICO
+    if (verTokens) {
+
+        registrarTokens = 1;
+        linea = 1;
+
+        while (yylex() != 0) {
+            // Flex imprime cada token reconocido.
+        }
+
+        registrarTokens = 0;
+
+        free(fuente);
+
+        return 0;
+    }
+
+    // Análisis sintáctico normal
     r = yyparse();
-    if (r != 0) return r;
+
+    if (r != 0) {
+        free(fuente);
+        return r;
+    }
+
+    // Generación NASM
     if (verNASM) {
-    return generarNASM(raiz);
-    return 0;
-   
-}
+        r = generarNASM(raiz);
+        free(fuente);
+        return r;
+    }
 
     printf("Cadena valida\n");
 
-if (verArbol) {
-    imprimirArbol(raiz, 0);
+    // Mostrar AST
+    if (verArbol) {
+        imprimirArbol(raiz, 0);
+    }
+
+    // Generar TAC
+    if (verTAC) {
+        r = generarTAC(raiz, stdout);
+        free(fuente);
+        return r;
+    }
+
+    free(fuente);
+
+    return 0;
 }
 
-if (verTAC) {
-    return generarTAC(raiz, stdout);
-}
+    
 
-
-
-return 0;
-
-   
-}
 
 /* Bison llama a esta funcion cuando el programa no sigue la gramatica.
    yychar es el token con el que fallo, yytext su texto y linea la linea actual. */
