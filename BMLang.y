@@ -153,7 +153,7 @@ vacio : %empty ;
 
 %%
 
- Entrada del programa y mensajes de error
+ /* Entrada del programa y mensajes de error */
 
 /* Todo el programa fuente. Lo guardamos entero para poder mostrar,
    cuando hay un error, el texto de la linea donde ocurrio. */
