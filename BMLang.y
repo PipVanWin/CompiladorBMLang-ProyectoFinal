@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include "tac.h"
+#include "nasm.h"
 
 int yylex();
 void yyerror(char *mensaje);
@@ -260,14 +261,21 @@ static void sugerencia(int lineaError) {
 int main(int argc, char **argv){
     const char *archivo = NULL;
     int verArbol = 0, verTAC = 0;
+    int verNASM = 0;
     FILE *entrada = stdin;
     int r;
 
     for (int i = 1; i < argc; i++) {
-        if (strcmp(argv[i], "--ast") == 0) verArbol = 1;
-        else if (strcmp(argv[i], "--tac") == 0) verTAC = 1;
-        else archivo = argv[i];             /* cualquier otra cosa es el archivo .bml */
-    }
+        if (strcmp(argv[i], "--ast") == 0) {
+            verArbol = 1;
+        } else if (strcmp(argv[i], "--tac") == 0) {
+            verTAC = 1;
+        } else if (strcmp(argv[i], "--nasm") == 0) {
+            verNASM = 1;
+        } else {
+            archivo = argv[i];
+        }
+}
 
     if (archivo != NULL) {
         entrada = fopen(archivo, "rb");
@@ -282,6 +290,11 @@ int main(int argc, char **argv){
     yy_scan_string(fuente);                 /* el lexer leera de "fuente" */
     r = yyparse();
     if (r != 0) return r;
+
+    if (verNASM == 1) {
+        return generarNASM(raiz);
+    }
+
     printf("Cadena valida\n");
 
     if (verArbol) imprimirArbol(raiz, 0);
