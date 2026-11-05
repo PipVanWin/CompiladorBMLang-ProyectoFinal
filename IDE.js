@@ -934,30 +934,111 @@ async function compilePipeline(tipo) {
     }
 
     // Generación NASM
-    if (tipo === "nasm") {
+    // Generación NASM
+if (tipo === "nasm") {
 
-        logConsole(
-            "El generador NASM todavía no está implementado en el compilador.",
-            "warning"
-        );
+    logConsole("Generando código ensamblador NASM...", "info");
 
-        switchTab("nasmTab");
+    nasmOutput.textContent = "Generando código NASM...";
+
+    switchTab("nasmTab");
+
+    const resultado = await compilarEnBackend(codigo, "nasm");
+
+    if (!resultado.success) {
+
+        nasmOutput.textContent =
+            resultado.output ||
+            resultado.errors ||
+            resultado.message;
+
+        logConsole("Error durante la generación de NASM.", "error");
 
         return;
     }
+
+    codigoNASM = resultado.output;
+
+    nasmOutput.textContent = codigoNASM;
+
+    logConsole("Código NASM generado correctamente.", "success");
+
+    return;
+}
+    
+
 
     // Generación del ejecutable
-    if (tipo === "build") {
+   if (tipo === "build") {
+
+    logConsole("Iniciando compilación del ejecutable...", "info");
+
+    switchTab("consoleTab");
+
+    try {
+
+        // Enviar el código al backend
+        const respuesta = await fetch(`${API_BASE}/build`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                code: codigo
+            })
+        });
+
+        // Comprobar si ocurrió un error
+        if (!respuesta.ok) {
+
+            const error = await respuesta.json();
+
+            logConsole(
+                error.errors || error.message || "Error al generar el ejecutable.",
+                "error"
+            );
+
+            return;
+        }
+
+        // Recibir el ejecutable
+        const archivo = await respuesta.blob();
+
+        // Crear una URL temporal
+        const url = window.URL.createObjectURL(archivo);
+
+        // Crear enlace de descarga
+        const enlace = document.createElement("a");
+
+        enlace.href = url;
+        enlace.download = "programa";
+
+        document.body.appendChild(enlace);
+
+        enlace.click();
+
+        // Limpiar recursos
+        enlace.remove();
+
+        window.URL.revokeObjectURL(url);
 
         logConsole(
-            "La generación del ejecutable todavía está pendiente.",
-            "warning"
+            "Ejecutable generado y descargado correctamente.",
+            "success"
         );
 
-        switchTab("consoleTab");
+    } catch (error) {
 
-        return;
+        console.error(error);
+
+        logConsole(
+            "No se pudo conectar con el backend para generar el ejecutable.",
+            "error"
+        );
     }
+
+    return;
+}
 
 }
 
