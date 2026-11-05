@@ -5,6 +5,8 @@
 %{
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
 #include "tac.h"
 
 int yylex();
@@ -40,8 +42,11 @@ extern int yychar;
 inicio : MAIN LLAVE_ABRIR bloque LLAVE_CERRAR
            {
                raiz = crearNodo(N_PROGRAMA, $3, NULL, NULL, NULL);
-               printf("Cadena valida\n");
            }
+       ;
+
+/* Bloque: lista de sentencias enlazadas con sig */
+bloque : sentencia otraSentencia   { $1->sig = $2; $$ = $1; }
        ;
 
 otraSentencia : sentencia otraSentencia   { $1->sig = $2; $$ = $1; }
@@ -144,25 +149,165 @@ factor : IDENTIFICADOR   { $$ = nodoVariable($1); }
        | MENOS factor    { $$ = crearNodo(N_NEGACION, $2, NULL, NULL, NULL); }
        | PARENTESIS_ABRIR expresion PARENTESIS_CERRAR { $$ = $2; }
 
-vacio : ;
+vacio : %empty ;
 
 %%
 
-int main(int argc, char **argv){
-    int r = yyparse();
-    if (r != 0) return r;
-    if (argc > 1 && strcmp(argv[1], "--ast") == 0) {
-        imprimirArbol(raiz, 0);
-    } else if (argc > 1 && strcmp(argv[1], "--tac") == 0) {
-        return generarTAC(raiz, stdout);
+ Entrada del programa y mensajes de error
+
+/* Todo el programa fuente. Lo guardamos entero para poder mostrar,
+   cuando hay un error, el texto de la linea donde ocurrio. */
+static char *fuente = NULL;
+
+/* Funcion de Flex que hace que el lexer lea de un texto en memoria
+   en lugar de leer directamente de la entrada estandar. */
+typedef struct yy_buffer_state *YY_BUFFER_STATE;
+extern YY_BUFFER_STATE yy_scan_string(const char *cadena);
+
+static char *leerTodo(FILE *f) {
+    size_t capacidad = 4096, n = 0, leidos;
+    char *buf = malloc(capacidad);
+    while ((leidos = fread(buf + n, 1, capacidad - n - 1, f)) > 0) {
+        n += leidos;
+        if (capacidad - n < 2) {            /* poco espacio: duplicar */
+            capacidad *= 2;
+            buf = realloc(buf, capacidad);
+        }
+    }
+    buf[n] = '\0';
+    return buf;
+}
+
+/* Devuelve el texto de la linea n (la primera es la 1), sin salto de linea. */
+static const char *textoLinea(int n) {
+    static char buf[512];
+    const char *p = fuente;
+    int i = 0;
+    if (p == NULL || n < 1) return "";
+    while (--n > 0) {                        /* avanzar hasta la linea n */
+        p = strchr(p, '\n');
+        if (p == NULL) return "";
+        p++;
+    }
+    while (p[i] != '\0' && p[i] != '\n' && p[i] != '\r' && i < (int)sizeof(buf) - 1) {
+        buf[i] = p[i];
+        i++;
+    }
+    buf[i] = '\0';
+    return buf;
+}
+
+static void mostrarLinea(int n) {
+    printf("  %4d | %s\n", n, textoLinea(n));
+}
+
+/* Ultima linea con codigo antes de la linea n (ignora lineas vacias y
+   comentarios). Devuelve 0 si no hay ninguna. */
+static int lineaPrevia(int n) {
+    for (int i = n - 1; i >= 1; i--) {
+        const char *t = textoLinea(i);
+        while (*t == ' ' || *t == '\t') t++;
+        if (*t != '\0' && strncmp(t, "#!", 2) != 0) return i;
     }
     return 0;
 }
 
+/* Ultimo caracter de una linea, sin contar espacios ni un comentario #! ... !# */
+static char ultimoCaracter(const char *t) {
+    int largo = (int)strlen(t);
+    const char *comentario = strstr(t, "#!");
+    if (comentario != NULL) largo = (int)(comentario - t);
+    while (largo > 0 && (t[largo - 1] == ' ' || t[largo - 1] == '\t')) largo--;
+    return largo > 0 ? t[largo - 1] : '\0';
+}
+
+/* Verdadero si el token con el que fallo el parser es lo primero de su linea. */
+static int primeroEnLinea(int n, const char *token) {
+    const char *t = textoLinea(n);
+    while (*t == ' ' || *t == '\t') t++;
+    return strncmp(t, token, strlen(token)) == 0;
+}
+
+/* Cuando el error aparece al inicio de una linea, casi siempre la causa
+   esta al final de la linea anterior: falta un ';' o una '{'. */
+static void sugerencia(int lineaError) {
+    int p = lineaPrevia(lineaError);
+    char copia[512];
+    const char *inicio;
+    char ultimo;
+    int esControl;
+
+    if (p == 0) return;
+    strncpy(copia, textoLinea(p), sizeof(copia) - 1);
+    copia[sizeof(copia) - 1] = '\0';
+    ultimo = ultimoCaracter(copia);
+    if (ultimo == ';' || ultimo == '{' || ultimo == '}') return;   /* termino bien */
+
+    inicio = copia;
+    while (*inicio == ' ' || *inicio == '\t') inicio++;
+    esControl = strncmp(inicio, "IF", 2) == 0 || strncmp(inicio, "WHILE", 5) == 0
+             || strncmp(inicio, "FOR", 3) == 0;
+
+    if (ultimo == ')' && esControl) {
+        printf("Sugerencia: puede faltar '{' al final de la linea %d\n", p);
+        mostrarLinea(p);
+    } else if (isalnum((unsigned char)ultimo) || ultimo == ')') {
+        printf("Sugerencia: puede faltar ';' al final de la linea %d\n", p);
+        mostrarLinea(p);
+    }
+}
+
+int main(int argc, char **argv){
+    const char *archivo = NULL;
+    int verArbol = 0, verTAC = 0;
+    FILE *entrada = stdin;
+    int r;
+
+    for (int i = 1; i < argc; i++) {
+        if (strcmp(argv[i], "--ast") == 0) verArbol = 1;
+        else if (strcmp(argv[i], "--tac") == 0) verTAC = 1;
+        else archivo = argv[i];             /* cualquier otra cosa es el archivo .bml */
+    }
+
+    if (archivo != NULL) {
+        entrada = fopen(archivo, "rb");
+        if (entrada == NULL) {
+            printf("No se pudo abrir el archivo %s\n", archivo);
+            return 2;
+        }
+    }
+    fuente = leerTodo(entrada);
+    if (entrada != stdin) fclose(entrada);
+
+    yy_scan_string(fuente);                 /* el lexer leera de "fuente" */
+    r = yyparse();
+    if (r != 0) return r;
+    printf("Cadena valida\n");
+
+    if (verArbol) imprimirArbol(raiz, 0);
+    if (verTAC) return generarTAC(raiz, stdout);
+    return 0;
+}
+
+/* Bison llama a esta funcion cuando el programa no sigue la gramatica.
+   yychar es el token con el que fallo, yytext su texto y linea la linea actual. */
 void yyerror(char *mensaje){
-    if(yychar == INVALIDO){
-        printf("Error lexico en linea %d: %s\n", linea, yytext);
-    }else{
-        printf("Error de sintaxis en linea %d, cerca de: %s\n", linea, yytext);
+    (void)mensaje;
+    if (yychar == INVALIDO) {
+        printf("Error lexico en linea %d: caracter no reconocido '%s'\n", linea, yytext);
+        mostrarLinea(linea);
+    } else if (yychar == YYEOF) {
+        int ultima = lineaPrevia(linea + 1);
+        if (ultima == 0) {
+            printf("Error de sintaxis: el programa esta vacio o incompleto\n");
+        } else {
+            printf("Error de sintaxis en linea %d: el programa termino antes de tiempo "
+                   "(falta cerrar un '}' o un ')')\n", ultima);
+            mostrarLinea(ultima);
+        }
+    } else {
+        printf("Error de sintaxis en linea %d: no se esperaba '%s'\n", linea, yytext);
+        mostrarLinea(linea);
+        if (primeroEnLinea(linea, yytext)) sugerencia(linea);
     }
 }
