@@ -2,14 +2,14 @@
 #define AST_H
 
 typedef enum {
-    N_PROGRAMA, N_SENTENCIAS, N_DECLARACION, N_ASIGNACION,
+    N_PROGRAMA, N_DECLARACION, N_ASIGNACION,
     N_READ, N_WRITE, N_IF, N_WHILE, N_FOR,
     N_OR, N_AND, N_COMPARACION,
     N_OPBIN, N_NEGACION, N_NUMERO, N_VARIABLE
 } TipoNodo;
 
 typedef enum {
-    OP_MENOR, OP_MAYOR, OP_MENORIGUAL, OP_IGUAL, OP_DIFERENTE
+    OP_MENOR, OP_MAYOR, OP_MENORIGUAL, OP_MAYORIGUAL, OP_IGUAL, OP_DIFERENTE
 } OpRel;
 
 typedef struct Nodo {
@@ -32,9 +32,6 @@ Nodo *nodoComparacion(int op, Nodo *izq, Nodo *der);
 void imprimirArbol(Nodo *n, int nivel);
  
 #endif
-
-#endif
-
 /* Todo esto hace que el archivo no se incluya dos veces y pueda dar error 
 de redefinicion, se incluye en el .y, en el .c 
 */
