@@ -5,6 +5,7 @@
 %{
 #include <stdio.h>
 #include <string.h>
+#include "tac.h"
 
 int yylex();
 void yyerror(char *mensaje);
@@ -149,10 +150,13 @@ vacio : ;
 
 int main(int argc, char **argv){
     int r = yyparse();
-    if (r == 0 && argc > 1 && strcmp(argv[1], "--ast") == 0) {
+    if (r != 0) return r;
+    if (argc > 1 && strcmp(argv[1], "--ast") == 0) {
         imprimirArbol(raiz, 0);
+    } else if (argc > 1 && strcmp(argv[1], "--tac") == 0) {
+        return generarTAC(raiz, stdout);
     }
-    return r;
+    return 0;
 }
 
 void yyerror(char *mensaje){
