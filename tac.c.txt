@@ -1,0 +1,264 @@
+/* tac.c - Generador de codigo de tres direcciones de BMLang.
+   Recorre el arbol que arma BMLang.y. */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdarg.h>
+#include "tac.h"
+
+static FILE *out;
+static int contTemp, contEtiq, errores;
+static const char *etiquetaPendiente;
+
+static char **vars;
+static int nVars;
+
+/* ---------- Tabla de variables declaradas ---------- */
+
+/* El lexer guarda "$a" y el 3AC usa "a". */
+static const char *sinPrefijo(const char *nombre) {
+    return nombre[0] == '$' ? nombre + 1 : nombre;
+}
+
+static int existeVar(const char *nombre) {
+    for (int i = 0; i < nVars; i++)
+        if (strcmp(vars[i], nombre) == 0) return 1;
+    return 0;
+}
+
+static void agregarVar(const char *nombre) {
+    vars = realloc(vars, (nVars + 1) * sizeof(char *));
+    vars[nVars++] = strdup(nombre);
+}
+
+/* ---------- Verificacion semantica ---------- */
+
+static void verificarUso(Nodo *v) {
+    if (!existeVar(sinPrefijo(v->nombre))) {
+        printf("Error semantico en linea %d: la variable %s no esta declarada\n",
+               v->linea, v->nombre);
+        errores++;
+    }
+}
+
+/* Visita el arbol en el orden del codigo fuente, asi una variable usada
+   antes de su DEC tambien se reporta. */
+static void verificar(Nodo *n) {
+    for (; n != NULL; n = n->sig) {
+        if (n->tipo == N_DECLARACION) {
+            for (Nodo *v = n->a; v != NULL; v = v->sig) {
+                if (existeVar(sinPrefijo(v->nombre))) {
+                    printf("Error semantico en linea %d: la variable %s ya fue declarada\n",
+                           v->linea, v->nombre);
+                    errores++;
+                } else {
+                    agregarVar(sinPrefijo(v->nombre));
+                }
+            }
+        } else if (n->tipo == N_VARIABLE) {
+            verificarUso(n);
+        } else {
+            verificar(n->a);
+            verificar(n->b);
+            verificar(n->c);
+            verificar(n->d);
+        }
+    }
+}
+
+/* ---------- Temporales, etiquetas e instrucciones ---------- */
+
+/* Saltan los nombres que ya usa el programa: si existe $t1, el primer
+   temporal sera t2. Sin esto, t1 se sobrescribiria. */
+static char *nuevoNombre(char prefijo, int *contador) {
+    char buf[32];
+    do {
+        snprintf(buf, sizeof buf, "%c%d", prefijo, ++(*contador));
+    } while (existeVar(buf));
+    return strdup(buf);
+}
+
+static char *nuevoTemp(void)     { return nuevoNombre('t', &contTemp); }
+static char *nuevaEtiqueta(void) { return nuevoNombre('l', &contEtiq); }
+
+/* La etiqueta se escribe en la misma linea que la instruccion siguiente:
+   "l1: z=0;". Si no hay instruccion despues, queda sola en su linea. */
+static void ponerEtiqueta(const char *etiqueta) {
+    if (etiquetaPendiente != NULL) fprintf(out, "%s:\n", etiquetaPendiente);
+    etiquetaPendiente = etiqueta;
+}
+
+static void instr(const char *formato, ...) {
+    va_list args;
+    if (etiquetaPendiente != NULL) {
+        fprintf(out, "%s: ", etiquetaPendiente);
+        etiquetaPendiente = NULL;
+    } else {
+        fputc('\t', out);
+    }
+    va_start(args, formato);
+    vfprintf(out, formato, args);
+    va_end(args);
+    fputc('\n', out);
+}
+
+/* ---------- Expresiones ---------- */
+
+/* Un numero con signos adelante (-5, --5) es una constante, no una operacion. */
+static int esConstante(Nodo *n, int *valor) {
+    if (n->tipo == N_NUMERO) { *valor = n->valor; return 1; }
+    if (n->tipo == N_NEGACION && esConstante(n->a, valor)) { *valor = -*valor; return 1; }
+    return 0;
+}
+
+/* Genera el codigo de la expresion y devuelve el operando con su resultado. */
+static char *genExpresion(Nodo *n) {
+    int valor;
+    if (esConstante(n, &valor)) {
+        char buf[32];
+        snprintf(buf, sizeof buf, "%d", valor);
+        return strdup(buf);
+    }
+    switch (n->tipo) {
+        case N_VARIABLE:
+            return strdup(sinPrefijo(n->nombre));
+        case N_NEGACION: {
+            char *a = genExpresion(n->a);
+            char *t = nuevoTemp();
+            instr("%s=-%s;", t, a);
+            return t;
+        }
+        case N_OPBIN: {
+            char *a = genExpresion(n->a);
+            char *b = genExpresion(n->b);
+            char *t = nuevoTemp();
+            instr("%s=%s%c%s;", t, a, n->op, b);
+            return t;
+        }
+        default:
+            fprintf(stderr, "Error interno: nodo %d no es una expresion\n", n->tipo);
+            exit(1);
+    }
+}
+
+/* ---------- Condiciones ---------- */
+
+static const char *opRelacional[] = { "<", ">", "<=", ">=", "==", "<>" };
+
+/* Genera la condicion: si es falsa salta a siFalsa; si es verdadera sigue con
+   la instruccion siguiente. && y || se resuelven con saltos (cortocircuito),
+   asi el 3AC no necesita operadores logicos. */
+static void genCondicion(Nodo *n, const char *siFalsa) {
+    switch (n->tipo) {
+        case N_COMPARACION: {
+            char *a = genExpresion(n->a);
+            char *b = genExpresion(n->b);
+            char *t = nuevoTemp();
+            instr("%s=%s%s%s;", t, a, opRelacional[n->op], b);
+            instr("ifZ %s goto %s", t, siFalsa);
+            break;
+        }
+        case N_AND:
+            genCondicion(n->a, siFalsa);
+            genCondicion(n->b, siFalsa);
+            break;
+        case N_OR: {
+            char *probarDerecha = nuevaEtiqueta();
+            char *verdadera = nuevaEtiqueta();
+            genCondicion(n->a, probarDerecha);
+            instr("goto %s;", verdadera);
+            ponerEtiqueta(probarDerecha);
+            genCondicion(n->b, siFalsa);
+            ponerEtiqueta(verdadera);
+            break;
+        }
+        default:
+            fprintf(stderr, "Error interno: nodo %d no es una condicion\n", n->tipo);
+            exit(1);
+    }
+}
+
+/* ---------- Sentencias ---------- */
+
+static void genSentencias(Nodo *n);
+
+static void genAsignacion(Nodo *n) {
+    char *valor = genExpresion(n->b);
+    instr("%s=%s;", sinPrefijo(n->a->nombre), valor);
+}
+
+static void genIf(Nodo *n) {
+    char *sinoEtiq = nuevaEtiqueta();
+    genCondicion(n->a, sinoEtiq);
+    genSentencias(n->b);
+    if (n->c != NULL) {
+        char *fin = nuevaEtiqueta();
+        instr("goto %s;", fin);
+        ponerEtiqueta(sinoEtiq);
+        genSentencias(n->c);
+        ponerEtiqueta(fin);
+    } else {
+        ponerEtiqueta(sinoEtiq);
+    }
+}
+
+static void genWhile(Nodo *n) {
+    char *inicio = nuevaEtiqueta();
+    char *fin = nuevaEtiqueta();
+    ponerEtiqueta(inicio);
+    genCondicion(n->a, fin);
+    genSentencias(n->b);
+    instr("goto %s;", inicio);
+    ponerEtiqueta(fin);
+}
+
+static void genFor(Nodo *n) {
+    char *inicio = nuevaEtiqueta();
+    char *fin = nuevaEtiqueta();
+    genAsignacion(n->a);
+    ponerEtiqueta(inicio);
+    genCondicion(n->b, fin);
+    genSentencias(n->d);
+    genAsignacion(n->c);
+    instr("goto %s;", inicio);
+    ponerEtiqueta(fin);
+}
+
+static void genSentencias(Nodo *n) {
+    for (; n != NULL; n = n->sig) {
+        switch (n->tipo) {
+            case N_DECLARACION: break;   /* DEC no genera codigo */
+            case N_ASIGNACION:  genAsignacion(n); break;
+            case N_READ:
+                instr("call input;");
+                instr("pop %s;", sinPrefijo(n->a->nombre));
+                break;
+            case N_WRITE:
+                instr("push %s;", sinPrefijo(n->a->nombre));
+                instr("call output;");
+                break;
+            case N_IF:    genIf(n); break;
+            case N_WHILE: genWhile(n); break;
+            case N_FOR:   genFor(n); break;
+            default:
+                fprintf(stderr, "Error interno: nodo %d no es una sentencia\n", n->tipo);
+                exit(1);
+        }
+    }
+}
+
+/* ---------- Punto de entrada ---------- */
+
+int generarTAC(Nodo *programa, FILE *salida) {
+    out = salida;
+    contTemp = contEtiq = errores = nVars = 0;
+    etiquetaPendiente = NULL;
+
+    verificar(programa->a);
+    if (errores > 0) return 1;
+
+    fprintf(out, "main:\n");
+    genSentencias(programa->a);
+    if (etiquetaPendiente != NULL) fprintf(out, "%s:\n", etiquetaPendiente);
+    return 0;
+}
