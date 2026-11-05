@@ -11,6 +11,8 @@
 
 let codigoFuente = "";
 let archivoActual = "programa.bml";
+// Dirección del backend de BMLang
+const API_BASE = "http://localhost:3000/api";
 
 let tokens = [];
 
@@ -28,6 +30,60 @@ let vm = {
     ejecutando: false,
     terminado: false
 };
+
+
+async function compilarEnBackend(codigo, modo) {
+
+    try {
+
+        const respuesta = await fetch(`${API_BASE}/compile`, {
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                code: codigo,
+                mode: modo
+            })
+        });
+
+        const resultado = await respuesta.json();
+
+        if (!respuesta.ok || !resultado.success) {
+
+            return {
+                success: false,
+                output: resultado.output || "",
+                errors: resultado.errors || "",
+                message: resultado.message || "Error al compilar."
+            };
+
+        }
+
+        return {
+            success: true,
+            output: resultado.output,
+            errors: resultado.errors
+        };
+
+    } catch (error) {
+
+        console.error("Error de conexión:", error);
+
+        return {
+            success: false,
+            output: "",
+            errors: error.message,
+            message: "No se pudo conectar con el backend de BMLang."
+        };
+
+    }
+
+}
+
+
 
 
 /* =========================================================
@@ -782,44 +838,46 @@ function validarEstructura(codigo) {
    el árbol sintáctico generado por tu compilador.
 */
 
-function generarAST() {
+async function generarAST() {
 
-    const errores = validarEstructura(editor.value);
+    const codigo = editor.value;
 
-    if (errores.length > 0) {
+    if (!codigo.trim()) {
 
-        document.getElementById("astOutput").textContent =
-            errores.join("\n");
+        logConsole("No hay código fuente para analizar.", "error");
 
-        logConsole("No se pudo validar la estructura del programa.", "error");
-
-        switchTab("astTab");
+        switchTab("consoleTab");
 
         return;
-
     }
 
-    const salida = [
-        "Programa",
-        "└── MAIN",
-        "    └── Bloque",
-        "        └── Sentencias",
-        "",
-        "Nota:",
-        "Esta es una representación preliminar.",
-        "Para obtener el AST real debe integrarse",
-        "la salida de imprimirArbol() de ast.c."
-    ];
+    logConsole("Generando AST mediante el compilador real...", "info");
 
-    document.getElementById("astOutput").textContent =
-        salida.join("\n");
+    const astOutput = document.getElementById("astOutput");
 
-    logConsole("Estructura preliminar del programa generada.", "success");
+    astOutput.textContent = "Generando árbol sintáctico...";
 
     switchTab("astTab");
 
-}
+    const resultado = await compilarEnBackend(codigo, "ast");
 
+    if (!resultado.success) {
+
+        astOutput.textContent =
+            resultado.output || resultado.errors || resultado.message;
+
+        logConsole("Error al generar el AST.", "error");
+
+        return;
+    }
+
+    astActual = resultado.output;
+
+    astOutput.textContent = resultado.output;
+
+    logConsole("AST generado correctamente mediante Bison y ast.c.", "success");
+
+}
 
 /* =========================================================
    17. PIPELINE DE COMPILACIÓN
@@ -832,7 +890,7 @@ function generarAST() {
    real mediante un backend.
 */
 
-function compilePipeline(tipo) {
+async function compilePipeline(tipo) {
 
     const codigo = editor.value;
 
@@ -843,93 +901,65 @@ function compilePipeline(tipo) {
         switchTab("consoleTab");
 
         return;
-
     }
 
-    logConsole("Iniciando proceso de compilación...", "info");
-
-    tokens = analizarLexico(codigo);
-
-    mostrarTokens(tokens);
-
-    const erroresLexicos = tokens.filter(
-        token => token.tipo === "INVALIDO"
-    );
-
-    if (erroresLexicos.length > 0) {
-
-        erroresLexicos.forEach(error => {
-
-            logConsole(
-                `Error léxico en línea ${error.linea}: ${error.lexema}`,
-                "error"
-            );
-
-        });
-
-        switchTab("lexicalTab");
-
-        return;
-
-    }
-
-    const errores = validarEstructura(codigo);
-
-    if (errores.length > 0) {
-
-        errores.forEach(error => {
-
-            logConsole(error, "error");
-
-        });
-
-        switchTab("consoleTab");
-
-        return;
-
-    }
-
-    logConsole(
-        `Análisis léxico preliminar: ${tokens.length} tokens.`,
-        "success"
-    );
-
+    // Generación de C3D
     if (tipo === "c3d") {
 
-        logConsole(
-            "El generador C3D real debe conectarse con el backend del compilador.",
-            "warning"
-        );
+        logConsole("Generando código de tres direcciones...", "info");
+
+        c3dOutput.textContent = "Generando C3D...";
 
         switchTab("c3dTab");
 
+        const resultado = await compilarEnBackend(codigo, "tac");
+
+        if (!resultado.success) {
+
+            c3dOutput.textContent =
+                resultado.output || resultado.errors || resultado.message;
+
+            logConsole("Error durante la generación de C3D.", "error");
+
+            return;
+        }
+
+        codigoC3D = resultado.output;
+
+        c3dOutput.textContent = resultado.output;
+
+        logConsole("Código de tres direcciones generado correctamente.", "success");
+
+        return;
     }
 
-    else if (tipo === "nasm") {
+    // Generación NASM
+    if (tipo === "nasm") {
 
         logConsole(
-            "El generador NASM real debe conectarse con el backend del compilador.",
+            "El generador NASM todavía no está implementado en el compilador.",
             "warning"
         );
 
         switchTab("nasmTab");
 
+        return;
     }
 
-    else if (tipo === "build") {
+    // Generación del ejecutable
+    if (tipo === "build") {
 
         logConsole(
-            "La generación del binario requiere ejecutar Flex, Bison y NASM desde el backend.",
+            "La generación del ejecutable todavía está pendiente.",
             "warning"
         );
 
         switchTab("consoleTab");
 
+        return;
     }
 
 }
-
-
 
 
 

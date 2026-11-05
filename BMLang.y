@@ -290,16 +290,27 @@ int main(int argc, char **argv){
     yy_scan_string(fuente);                 /* el lexer leera de "fuente" */
     r = yyparse();
     if (r != 0) return r;
-
-    if (verNASM == 1) {
-        return generarNASM(raiz);
-    }
+    if (verNASM) {
+    return generarNASM(raiz);
+    return 0;
+   
+}
 
     printf("Cadena valida\n");
 
-    if (verArbol) imprimirArbol(raiz, 0);
-    if (verTAC) return generarTAC(raiz, stdout);
-    return 0;
+if (verArbol) {
+    imprimirArbol(raiz, 0);
+}
+
+if (verTAC) {
+    return generarTAC(raiz, stdout);
+}
+
+
+
+return 0;
+
+   
 }
 
 /* Bison llama a esta funcion cuando el programa no sigue la gramatica.
