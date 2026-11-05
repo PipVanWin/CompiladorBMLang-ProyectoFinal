@@ -32,7 +32,7 @@ Nodo *nodoOp(int op, Nodo *izq, Nodo *der) {
     return n;
 }
 
-Nodo *nodoComparacion*(int op, Nodo *izq, Nodo *der) {
+Nodo *nodoComparacion(int op, Nodo *izq, Nodo *der) {
     Nodo *n = crearNodo(N_COMPARACION, izq, der, NULL, NULL);
     n ->op = op;
     return n;
@@ -51,7 +51,7 @@ static void hijo(const char *etiqueta, Nodo *h, int nivel) {
 }
  
 void imprimirArbol(Nodo *n, int nivel) {
-    for (; n != NULL; n = n->sig) {      /* recorre toda la lista */
+    for (; n != NULL; n = n->sig) {     
         sangria(nivel);
         switch (n->tipo) {
             case N_PROGRAMA:    printf("Programa\n");
@@ -102,4 +102,4 @@ que es calloc? se usa para que deje todo en 0, en otras palabras,
 si no se usa un hijo del arbol sya se vuelve NULL sin que tengamos que configurar algo 
 n ->linea = linea sirve para guardar en cada nodo en que linea estaba, o sea, para que diga:
 variable tal no esta declarada en la linea tal
-*/ 
+*/
