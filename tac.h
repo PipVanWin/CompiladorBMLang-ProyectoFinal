@@ -8,6 +8,7 @@
    en salida. Devuelve 0 si todo salio bien, o 1 si hubo errores semanticos
    (en ese caso se reportan con su linea y no se escribe nada en salida). */
 int generarTAC(Nodo *programa, FILE *salida);
- 
+int validarVariables(Nodo *programa);
+
 #endif
  

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "nasm.h"
+#include "tac.h"
 
 static int ultimaEtiqueta;
 static int usaLectura;
@@ -370,6 +371,9 @@ static void emitirEscritura(void) {
 
 /* escribe las variables y las rutinas que se usan. */
 int generarNASM(Nodo *programa) {
+    if (validarVariables(programa)) {
+        return 1;
+    }
     ultimaEtiqueta = 0;
     usaLectura = 0;
     usaEscritura = 0;

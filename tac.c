@@ -33,37 +33,52 @@ static void agregarVar(const char *nombre) {
 
 /* ---------- Verificacion semantica ---------- */
 
-static void verificarUso(Nodo *v) {
+static void verificarUso(Nodo *v, FILE *diagnosticos) {
     if (!existeVar(sinPrefijo(v->nombre))) {
-        printf("Error semantico en linea %d: la variable %s no esta declarada\n",
-               v->linea, v->nombre);
+        fprintf(diagnosticos,
+                "Error semantico en linea %d: la variable %s no esta declarada\n",
+                v->linea, v->nombre);
         errores++;
     }
 }
 
-/* Visita el arbol en el orden del codigo fuente, asi una variable usada
-   antes de su DEC tambien se reporta. */
-static void verificar(Nodo *n) {
+static void verificar(Nodo *n, FILE *diagnosticos) {
     for (; n != NULL; n = n->sig) {
         if (n->tipo == N_DECLARACION) {
             for (Nodo *v = n->a; v != NULL; v = v->sig) {
                 if (existeVar(sinPrefijo(v->nombre))) {
-                    printf("Error semantico en linea %d: la variable %s ya fue declarada\n",
-                           v->linea, v->nombre);
+                    fprintf(diagnosticos,
+                            "Error semantico en linea %d: la variable %s ya fue declarada\n",
+                            v->linea, v->nombre);
                     errores++;
                 } else {
                     agregarVar(sinPrefijo(v->nombre));
                 }
             }
         } else if (n->tipo == N_VARIABLE) {
-            verificarUso(n);
+            verificarUso(n, diagnosticos);
         } else {
-            verificar(n->a);
-            verificar(n->b);
-            verificar(n->c);
-            verificar(n->d);
+            verificar(n->a, diagnosticos);
+            verificar(n->b, diagnosticos);
+            verificar(n->c, diagnosticos);
+            verificar(n->d, diagnosticos);
         }
     }
+}
+
+int validarVariables(Nodo *programa) {
+    errores = 0;
+    nVars = 0;
+    verificar(programa->a, stderr);
+
+    for (int i = 0; i < nVars; i++) {
+        free(vars[i]);
+    }
+    free(vars);
+    vars = NULL;
+    nVars = 0;
+
+    return errores > 0;
 }
 
 /* ---------- Temporales, etiquetas e instrucciones ---------- */
@@ -254,7 +269,7 @@ int generarTAC(Nodo *programa, FILE *salida) {
     contTemp = contEtiq = errores = nVars = 0;
     etiquetaPendiente = NULL;
 
-    verificar(programa->a);
+    verificar(programa->a, stdout);
     if (errores > 0) return 1;
 
     fprintf(out, "main:\n");
