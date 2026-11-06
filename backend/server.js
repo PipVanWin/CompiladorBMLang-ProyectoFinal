@@ -1,4 +1,3 @@
-
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -50,10 +49,10 @@ async function generarEjecutable(codigo) {
             'programa'
         );
 
-       
+
         await fs.writeFile(archivoFuente, codigo, 'utf8');
 
-        
+
         const resultadoNASM = await ejecutarArchivo(
             COMPILADOR,
             [archivoFuente, '--nasm'],
@@ -70,7 +69,7 @@ async function generarEjecutable(codigo) {
             'utf8'
         );
 
-       
+
         await ejecutarArchivo(
             NASM,
             [
@@ -86,7 +85,7 @@ async function generarEjecutable(codigo) {
             }
         );
 
-        
+
         await ejecutarArchivo(
             LINKER,
             [
@@ -102,7 +101,7 @@ async function generarEjecutable(codigo) {
             }
         );
 
-        
+
         return {
             success: true,
             message: 'Ejecutable generado correctamente.',
@@ -113,7 +112,7 @@ async function generarEjecutable(codigo) {
 
     } catch (error) {
 
-       
+
         if (directorioTemporal) {
             await fs.rm(directorioTemporal, {
                 recursive: true,
@@ -144,7 +143,7 @@ app.post('/api/compile', async (req, res) => {
         });
     }
 
-    if (!['tac', 'ast','nasm'].includes(mode)) {
+    if (!['tac', 'ast', 'nasm'].includes(mode)) {
         return res.status(400).json({
             success: false,
             message: 'Modo de compilación no válido'
@@ -214,63 +213,76 @@ app.post('/api/build', async (req, res) => {
 
     }
 
+    let resultado;
+
     try {
 
-        const resultado = await generarEjecutable(code);
+        resultado = await generarEjecutable(code);
 
-        res.json(resultado);
+        const binario = await fs.readFile(resultado.archivoEjecutable);
+
+        res.set({
+            'Content-Type': 'application/octet-stream',
+            'Content-Disposition': 'attachment; filename="programa"'
+        });
+
+        res.send(binario);
 
     } catch (error) {
 
         res.status(422).json({
             success: false,
             message: error.message,
-            errors: error.stderr || ''
+            errors: error.stderr || error.stdout || ''
         });
+
+    } finally {
+
+        if (resultado?.directorioTemporal) {
+            await fs.rm(resultado.directorioTemporal, {
+                recursive: true,
+                force: true
+            });
+        }
 
     }
 
 });
 
+
 app.post('/api/run', async (req, res) => {
 
-    const { code } = req.body;
+    const { code, input = '' } = req.body;
 
     if (typeof code !== 'string' || code.trim() === '') {
+
         return res.status(400).json({
             success: false,
             message: 'No se recibió código BMLang.'
         });
+
     }
 
     let resultado;
 
     try {
 
-       
         resultado = await generarEjecutable(code);
 
-console.log("Resultado de generarEjecutable:", resultado);
+        const proceso = ejecutarArchivo(
+            resultado.archivoEjecutable,
+            [],
+            {
+                timeout: 5000,
+                maxBuffer: 1024 * 1024,
+                encoding: 'utf8'
+            }
+        );
 
-if (
-    !resultado ||
-    typeof resultado.archivoEjecutable !== 'string'
-) {
-    throw new Error(
-        'No se recibió una ruta válida del ejecutable.'
-    );
-}
+        proceso.child.stdin.on('error', () => {});
+        proceso.child.stdin.end(String(input));
 
-const ejecucion = await ejecutarArchivo(
-    resultado.archivoEjecutable,
-    [],
-    {
-        timeout: 5000,
-        maxBuffer: 1024 * 1024,
-        encoding: 'utf8'
-    }
-);
-        
+        const ejecucion = await proceso;
 
         res.json({
             success: true,
@@ -280,10 +292,12 @@ const ejecucion = await ejecutarArchivo(
 
     } catch (error) {
 
+        const falloCompilacion = !error.killed && !error.stderr;
+
         res.status(422).json({
             success: false,
-            output: error.stdout || '',
-            errors: error.stderr || '',
+            output: falloCompilacion ? '' : error.stdout || '',
+            errors: falloCompilacion ? error.stdout || '' : error.stderr || '',
             message: error.killed
                 ? 'El programa superó el tiempo máximo de ejecución.'
                 : error.message
@@ -291,7 +305,6 @@ const ejecucion = await ejecutarArchivo(
 
     } finally {
 
-       
         if (resultado?.directorioTemporal) {
             await fs.rm(resultado.directorioTemporal, {
                 recursive: true,
@@ -305,4 +318,3 @@ const ejecucion = await ejecutarArchivo(
 app.listen(PORT, () => {
     console.log(`Servidor BMLang ejecutándose en http://localhost:${PORT}`);
 });
-

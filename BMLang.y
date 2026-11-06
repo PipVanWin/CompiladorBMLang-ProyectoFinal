@@ -297,11 +297,7 @@ int main(int argc, char **argv){
    
 }
 
-    printf("Cadena valida\n");
-
-if (verArbol) {
-    imprimirArbol(raiz, 0);
-}
+        if (!verArbol && !verTAC) printf("Cadena valida\n");
 
 if (verTAC) {
     return generarTAC(raiz, stdout);

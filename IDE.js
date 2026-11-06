@@ -1,5 +1,3 @@
-
-
 let codigoFuente = "";
 let archivoActual = "programa.bml";
 
@@ -75,9 +73,6 @@ async function compilarEnBackend(codigo, modo) {
 }
 
 
-
-
-
 const editor = document.getElementById("codeEditor");
 
 const lineNumbers = document.getElementById("lineNumbers");
@@ -91,7 +86,6 @@ const nasmOutput = document.getElementById("nasmOutput");
 const consoleLog = document.getElementById("consoleLog");
 
 
-
 document.addEventListener("DOMContentLoaded", () => {
 
     actualizarNumerosLinea();
@@ -103,7 +97,6 @@ document.addEventListener("DOMContentLoaded", () => {
     logConsole("Entorno preparado para trabajar con BMLang.", "info");
 
 });
-
 
 
 function logConsole(mensaje, tipo = "info") {
@@ -126,7 +119,7 @@ function logConsole(mensaje, tipo = "info") {
 
     const elemento = document.createElement("div");
 
-    elemento.className = colores[tipo] || colores.info;
+    elemento.className = `${colores[tipo] || colores.info} whitespace-pre-wrap`;
 
     const fecha = new Date().toLocaleTimeString();
 
@@ -147,8 +140,6 @@ function clearConsole() {
     logConsole("Consola limpiada.", "success");
 
 }
-
-
 
 
 function updateEditorStats() {
@@ -184,8 +175,6 @@ function actualizarNumerosLinea() {
 }
 
 
-
-
 function newFile() {
 
     const confirmar = confirm(
@@ -218,13 +207,7 @@ function reiniciarResultados() {
     document.getElementById("astOutput").textContent =
         "#! AST no generado !#";
 
-    document.getElementById("tokenTableBody").innerHTML = `
-        <tr>
-            <td colspan="4" class="text-center text-slate-500 py-8">
-                No hay tokens disponibles.
-            </td>
-        </tr>
-    `;
+    document.getElementById("stdinInput").value = "";
 
     codigoC3D = "";
 
@@ -237,8 +220,6 @@ function reiniciarResultados() {
     resetInterpreterVM();
 
 }
-
-
 
 
 function openFile(event) {
@@ -289,8 +270,6 @@ function openFile(event) {
 }
 
 
-
-
 function saveFile() {
 
     const contenido = editor.value;
@@ -318,7 +297,6 @@ function saveFile() {
     );
 
 }
-
 
 
 function loadSampleCode(ejemplo) {
@@ -420,8 +398,6 @@ MAIN {
 }
 
 
-
-
 function switchTab(tabId) {
 
     const pestañas = document.querySelectorAll(".tab-content");
@@ -483,8 +459,6 @@ function switchTab(tabId) {
 }
 
 
-
-
 function toggleModal(mostrar) {
 
     const modal = document.getElementById("integrantesModal");
@@ -492,8 +466,6 @@ function toggleModal(mostrar) {
     modal.classList.toggle("hidden", !mostrar);
 
 }
-
-
 
 
 async function copyToClipboard(elementId) {
@@ -656,11 +628,11 @@ function analizarLexico(codigo) {
 }
 
 
-
-
 function mostrarTokens(lista) {
 
     const tabla = document.getElementById("tokenTableBody");
+
+    if (!tabla) return;
 
     tabla.innerHTML = "";
 
@@ -710,8 +682,6 @@ function mostrarTokens(lista) {
     });
 
 }
-
-
 
 
 function validarEstructura(codigo) {
@@ -781,8 +751,6 @@ function validarEstructura(codigo) {
 }
 
 
-
-
 async function generarAST() {
 
     const codigo = editor.value;
@@ -825,7 +793,6 @@ async function generarAST() {
 }
 
 
-
 async function compilePipeline(tipo) {
 
     const codigo = editor.value;
@@ -839,7 +806,7 @@ async function compilePipeline(tipo) {
         return;
     }
 
-   
+
     if (tipo === "c3d") {
 
         logConsole("Generando código de tres direcciones...", "info");
@@ -869,187 +836,200 @@ async function compilePipeline(tipo) {
         return;
     }
 
-    
-if (tipo === "nasm") {
 
-    logConsole("Generando código ensamblador NASM...", "info");
+    if (tipo === "nasm") {
 
-    nasmOutput.textContent = "Generando código NASM...";
+        logConsole("Generando código ensamblador NASM...", "info");
 
-    switchTab("nasmTab");
+        nasmOutput.textContent = "Generando código NASM...";
 
-    const resultado = await compilarEnBackend(codigo, "nasm");
+        switchTab("nasmTab");
 
-    if (!resultado.success) {
+        const resultado = await compilarEnBackend(codigo, "nasm");
 
-        nasmOutput.textContent =
-            resultado.output ||
-            resultado.errors ||
-            resultado.message;
+        if (!resultado.success) {
 
-        logConsole("Error durante la generación de NASM.", "error");
+            nasmOutput.textContent =
+                resultado.output ||
+                resultado.errors ||
+                resultado.message;
+
+            logConsole("Error durante la generación de NASM.", "error");
+
+            return;
+        }
+
+        codigoNASM = resultado.output;
+
+        nasmOutput.textContent = codigoNASM;
+
+        logConsole("Código NASM generado correctamente.", "success");
 
         return;
     }
 
-    codigoNASM = resultado.output;
 
-    nasmOutput.textContent = codigoNASM;
-
-    logConsole("Código NASM generado correctamente.", "success");
-
-    return;
-}
     if (tipo === "run") {
 
-    logConsole("Compilando y ejecutando programa...", "info");
+        switchTab("consoleTab");
 
-    switchTab("consoleTab");
+        const entrada = document.getElementById("stdinInput");
 
-    try {
+        const usaRead = /\bREAD\b/.test(codigo.replace(/#!.*?!#/g, ""));
 
-        const respuesta = await fetch(`${API_BASE}/run`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                code: codigo
-            })
-        });
-
-        const resultado = await respuesta.json();
-
-        if (!resultado.success) {
+        if (usaRead && !entrada.value.trim()) {
 
             logConsole(
-                resultado.errors ||
-                resultado.message ||
-                "Error durante la ejecución.",
-                "error"
+                "El programa usa READ: escriba los valores en Entrada estándar y presione Ejecutar de nuevo.",
+                "warning"
             );
 
-            if (resultado.output) {
-                logConsole(resultado.output, "info");
-            }
+            entrada.focus();
 
             return;
         }
 
-       
-        if (resultado.output) {
+        logConsole("Compilando y ejecutando programa...", "info");
+
+        try {
+
+            const respuesta = await fetch(`${API_BASE}/run`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    code: codigo,
+                    input: entrada.value
+                })
+            });
+
+            const resultado = await respuesta.json();
+
+            if (!resultado.success) {
+
+                logConsole(
+                    resultado.errors ||
+                    resultado.message ||
+                    "Error durante la ejecución.",
+                    "error"
+                );
+
+                if (resultado.output) {
+                    logConsole(resultado.output, "info");
+                }
+
+                return;
+            }
+
+
+            if (resultado.output) {
+
+                logConsole(
+                    resultado.output,
+                    "success"
+                );
+
+            } else {
+
+                logConsole(
+                    "El programa terminó correctamente, pero no produjo salida.",
+                    "info"
+                );
+            }
+
+
+            if (resultado.errors) {
+                logConsole(resultado.errors, "warning");
+            }
 
             logConsole(
-                resultado.output,
+                "Ejecución finalizada correctamente.",
                 "success"
             );
 
-        } else {
+        } catch (error) {
+
+            console.error(error);
 
             logConsole(
-                "El programa terminó correctamente, pero no produjo salida.",
-                "info"
-            );
-        }
-
-        
-        if (resultado.errors) {
-            logConsole(resultado.errors, "warning");
-        }
-
-        logConsole(
-            "Ejecución finalizada correctamente.",
-            "success"
-        );
-
-    } catch (error) {
-
-        console.error(error);
-
-        logConsole(
-            "No se pudo conectar con el backend.",
-            "error"
-        );
-    }
-
-    return;
-}
-
-
-   
-   if (tipo === "build") {
-
-    logConsole("Iniciando compilación del ejecutable...", "info");
-
-    switchTab("consoleTab");
-
-    try {
-
-        
-        const respuesta = await fetch(`${API_BASE}/build`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                code: codigo
-            })
-        });
-
-        
-        if (!respuesta.ok) {
-
-            const error = await respuesta.json();
-
-            logConsole(
-                error.errors || error.message || "Error al generar el ejecutable.",
+                "No se pudo conectar con el backend.",
                 "error"
             );
-
-            return;
         }
 
-        
-        const archivo = await respuesta.blob();
-
-       
-        const url = window.URL.createObjectURL(archivo);
-
-        
-        const enlace = document.createElement("a");
-
-        enlace.href = url;
-        enlace.download = "programa";
-
-        document.body.appendChild(enlace);
-
-        enlace.click();
-
-        
-        enlace.remove();
-
-        window.URL.revokeObjectURL(url);
-
-        logConsole(
-            "Ejecutable generado y descargado correctamente.",
-            "success"
-        );
-
-    } catch (error) {
-
-        console.error(error);
-
-        logConsole(
-            "No se pudo conectar con el backend para generar el ejecutable.",
-            "error"
-        );
+        return;
     }
 
-    return;
-}
+
+    if (tipo === "build") {
+
+        logConsole("Iniciando compilación del ejecutable...", "info");
+
+        switchTab("consoleTab");
+
+        try {
+
+            const respuesta = await fetch(`${API_BASE}/build`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    code: codigo
+                })
+            });
+
+
+            if (!respuesta.ok) {
+
+                const error = await respuesta.json();
+
+                logConsole(
+                    error.errors || error.message || "Error al generar el ejecutable.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            const archivo = await respuesta.blob();
+
+            const url = window.URL.createObjectURL(archivo);
+
+            const enlace = document.createElement("a");
+
+            enlace.href = url;
+            enlace.download = "programa";
+
+            document.body.appendChild(enlace);
+
+            enlace.click();
+
+            enlace.remove();
+
+            window.URL.revokeObjectURL(url);
+
+            logConsole(
+                "Ejecutable generado y descargado. Para correrlo en Linux: chmod +x programa && ./programa",
+                "success"
+            );
+
+        } catch (error) {
+
+            console.error(error);
+
+            logConsole(
+                "No se pudo conectar con el backend para generar el ejecutable.",
+                "error"
+            );
+        }
+
+        return;
+    }
 
 }
-
 
 
 function prepararVM() {
@@ -1252,8 +1232,6 @@ function evaluarExpresion(expresion) {
 }
 
 
-
-
 function stepInterpreter() {
 
     if (vm.instrucciones.length === 0) {
@@ -1309,8 +1287,6 @@ function stepInterpreter() {
     }
 
 }
-
-
 
 
 function runInterpreter() {
@@ -1372,8 +1348,6 @@ function runInterpreter() {
     }
 
 }
-
-
 
 
 function actualizarVM() {
@@ -1479,8 +1453,6 @@ function actualizarVM() {
 }
 
 
-
-
 function finalizarVM() {
 
     vm.terminado = true;
@@ -1500,14 +1472,11 @@ function finalizarVM() {
 }
 
 
-
 editor.addEventListener("scroll", () => {
 
     lineNumbers.scrollTop = editor.scrollTop;
 
 });
-
-
 
 
 editor.addEventListener("keydown", event => {
@@ -1554,5 +1523,4 @@ editor.addEventListener("keydown", event => {
     }
 
 });
-
 
