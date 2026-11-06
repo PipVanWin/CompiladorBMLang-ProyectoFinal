@@ -497,16 +497,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  4
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   98
+#define YYLAST   114
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  34
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  24
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  49
+#define YYNRULES  50
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  102
+#define YYNSTATES  106
 
 /* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   288
@@ -561,8 +561,9 @@ static const yytype_uint8 yyrline[] =
        0,    44,    44,    51,    54,    55,    58,    59,    60,    61,
       64,    65,    66,    67,    70,    78,    84,    87,    91,    95,
       99,   103,   104,   105,   108,   112,   116,   117,   120,   121,
-     124,   128,   129,   130,   131,   132,   133,   135,   136,   137,
-     140,   141,   142,   145,   146,   149,   150,   151,   152,   154
+     124,   126,   130,   131,   132,   133,   134,   135,   137,   138,
+     139,   142,   143,   144,   147,   148,   151,   152,   153,   154,
+     156
 };
 #endif
 
@@ -597,7 +598,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-72)
+#define YYPACT_NINF (-76)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -611,17 +612,17 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      14,    -3,    21,    39,   -72,    31,    45,    47,    33,    34,
-      36,    32,    35,    39,    37,   -72,   -72,   -72,   -72,   -72,
-     -72,   -72,    40,   -72,   -72,    -4,    -4,    52,    -4,   -72,
-     -72,    39,   -72,   -72,    56,   -72,   -72,   -72,   -72,    -4,
-      -4,    -7,    54,   -72,    18,   -10,   -72,    44,     1,    41,
-     -12,   -72,    40,   -72,    30,    -4,    46,    -4,   -72,   -72,
-     -72,   -72,   -72,   -72,    -4,    -4,    -4,    -4,    -4,    -4,
-      48,    -4,   -72,   -72,    54,    39,   -72,   -10,   -10,   -12,
-     -72,   -72,   -72,    39,    -2,    49,    50,    52,    65,   -72,
-      53,    -1,   -72,   -72,    55,    39,   -72,    39,    57,    58,
-     -72,   -72
+      18,   -11,    50,    69,   -76,    47,    53,    55,    41,    42,
+      43,    38,    22,    69,    46,   -76,   -76,   -76,   -76,   -76,
+     -76,   -76,    54,   -76,   -76,    -4,    -4,    72,     8,   -76,
+     -76,    69,   -76,   -76,    74,   -76,   -76,   -76,   -76,     8,
+      -4,    10,    71,   -76,    40,   -10,   -76,    61,    30,    58,
+       8,    14,   -76,    54,   -76,    45,    25,    -4,    62,    -4,
+     -76,   -76,   -76,   -76,   -76,   -76,     8,     8,     8,     8,
+       8,     8,    63,    -4,    60,   -76,   -76,   -76,    71,    69,
+     -76,   -10,   -10,    14,   -76,   -76,   -76,    69,    11,    64,
+      65,    72,    84,   -76,    68,    -1,   -76,   -76,    70,    69,
+     -76,    69,    67,    73,   -76,   -76
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -630,31 +631,31 @@ static const yytype_int8 yypact[] =
 static const yytype_int8 yydefact[] =
 {
        0,     0,     0,     0,     1,     0,     0,     0,     0,     0,
-       0,     0,     0,    49,     0,    10,    11,    12,    13,     7,
-       8,     9,    49,    17,    18,     0,     0,     0,     0,     2,
-       3,    49,     5,     6,     0,    14,    16,    45,    46,     0,
-       0,     0,    27,    29,     0,    39,    42,    44,     0,     0,
-      19,     4,    49,    47,     0,     0,     0,     0,    33,    34,
-      35,    36,    31,    32,     0,     0,     0,     0,     0,     0,
-       0,     0,    15,    48,    26,     0,    28,    37,    38,    30,
-      40,    41,    43,     0,     0,     0,     0,     0,    49,    24,
-       0,     0,    20,    23,     0,     0,    22,     0,     0,     0,
-      21,    25
+       0,     0,     0,    50,     0,    10,    11,    12,    13,     7,
+       8,     9,    50,    17,    18,     0,     0,     0,     0,     2,
+       3,    50,     5,     6,     0,    14,    16,    46,    47,     0,
+       0,     0,    27,    29,     0,    40,    43,    45,     0,     0,
+       0,    19,     4,    50,    48,     0,     0,     0,     0,     0,
+      34,    35,    36,    37,    32,    33,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,    15,    31,    49,    26,     0,
+      28,    38,    39,    30,    41,    42,    44,     0,     0,     0,
+       0,     0,    50,    24,     0,     0,    20,    23,     0,     0,
+      22,     0,     0,     0,    21,    25
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -72,   -72,   -71,    51,    -8,   -72,   -72,    23,   -72,   -72,
-     -26,    -6,   -72,   -72,   -72,   -24,    22,    24,   -72,   -25,
-     -29,   -14,    59,   -22
+     -76,   -76,   -75,    66,    -8,   -76,   -76,    48,   -76,   -76,
+     -26,     4,   -76,   -76,   -76,   -24,    49,    44,   -76,   -25,
+     -34,   -60,    75,   -22
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
        0,     2,    12,    30,    13,    14,    15,    35,    16,    17,
-      18,    19,    92,    20,    21,    41,    42,    43,    66,    44,
+      18,    19,    96,    20,    21,    41,    42,    43,    68,    44,
       45,    46,    47,    32
 };
 
@@ -663,30 +664,34 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      36,    49,    48,    50,    85,    31,     8,    37,    38,    64,
-      65,    55,    86,    67,    68,    54,    55,     1,    39,    55,
-      56,     4,    40,    31,    98,     3,    99,    95,    70,    87,
-      36,    58,    59,    60,    61,    77,    78,    62,    63,    64,
-      65,    79,    22,     5,     6,     7,     8,    84,     9,    10,
-      11,    64,    65,    80,    81,    82,    23,    73,    24,    25,
-      26,    90,    27,    11,    29,    28,    93,    52,    33,    69,
-      34,    57,    71,    91,    75,    72,    83,    74,    88,    89,
-      94,    76,    51,    97,     0,    96,   100,   101,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,    53
+      36,    49,    48,    51,    89,    31,     8,    37,    38,    84,
+      85,    86,    90,    69,    70,    56,    55,     3,    39,    37,
+      38,     1,    40,    31,   102,    74,   103,    99,    57,    57,
+      39,    36,    81,    82,    50,    66,    67,    58,    60,    61,
+      62,    63,    91,    83,    64,    65,    66,    67,    57,    88,
+       4,    29,    77,    60,    61,    62,    63,    72,    22,    64,
+      65,    66,    67,    57,    23,    94,    24,    25,    26,    27,
+      97,    28,    76,     5,     6,     7,     8,    33,     9,    10,
+      11,    66,    67,    11,    34,    53,    71,    77,    59,    73,
+      79,    87,    95,    92,    93,    98,   104,    52,   101,   100,
+       0,    75,   105,    80,     0,     0,    78,     0,     0,     0,
+       0,     0,     0,     0,    54
 };
 
 static const yytype_int8 yycheck[] =
 {
-      22,    27,    26,    28,    75,    13,     7,    11,    12,    21,
-      22,    18,    83,    23,    24,    40,    18,     3,    22,    18,
-      27,     0,    26,    31,    95,    28,    97,    28,    27,    31,
-      52,    13,    14,    15,    16,    64,    65,    19,    20,    21,
-      22,    66,    11,     4,     5,     6,     7,    71,     9,    10,
-      11,    21,    22,    67,    68,    69,    11,    27,    11,    26,
-      26,    87,    26,    11,    29,    33,    88,    11,    31,    25,
-      30,    17,    31,     8,    28,    52,    28,    55,    29,    29,
-      27,    57,    31,    28,    -1,    91,    29,    29,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    39
+      22,    27,    26,    28,    79,    13,     7,    11,    12,    69,
+      70,    71,    87,    23,    24,    40,    40,    28,    22,    11,
+      12,     3,    26,    31,    99,    50,   101,    28,    18,    18,
+      22,    53,    66,    67,    26,    21,    22,    27,    13,    14,
+      15,    16,    31,    68,    19,    20,    21,    22,    18,    73,
+       0,    29,    27,    13,    14,    15,    16,    27,    11,    19,
+      20,    21,    22,    18,    11,    91,    11,    26,    26,    26,
+      92,    33,    27,     4,     5,     6,     7,    31,     9,    10,
+      11,    21,    22,    11,    30,    11,    25,    27,    17,    31,
+      28,    28,     8,    29,    29,    27,    29,    31,    28,    95,
+      -1,    53,    29,    59,    -1,    -1,    57,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    39
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
@@ -698,12 +703,12 @@ static const yytype_int8 yystos[] =
       47,    48,    11,    11,    11,    26,    26,    26,    33,    29,
       37,    38,    57,    31,    30,    41,    57,    11,    12,    22,
       26,    49,    50,    51,    53,    54,    55,    56,    49,    44,
-      53,    37,    11,    56,    53,    18,    27,    17,    13,    14,
-      15,    16,    19,    20,    21,    22,    52,    23,    24,    25,
-      27,    31,    41,    27,    50,    28,    51,    54,    54,    53,
-      55,    55,    55,    28,    49,    36,    36,    31,    29,    29,
-      44,     8,    46,    57,    27,    28,    45,    28,    36,    36,
-      29,    29
+      26,    53,    37,    11,    56,    49,    53,    18,    27,    17,
+      13,    14,    15,    16,    19,    20,    21,    22,    52,    23,
+      24,    25,    27,    31,    53,    41,    27,    27,    50,    28,
+      51,    54,    54,    53,    55,    55,    55,    28,    49,    36,
+      36,    31,    29,    29,    44,     8,    46,    57,    27,    28,
+      45,    28,    36,    36,    29,    29
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
@@ -712,8 +717,9 @@ static const yytype_int8 yyr1[] =
        0,    34,    35,    36,    37,    37,    38,    38,    38,    38,
       39,    39,    39,    39,    40,    41,    41,    42,    43,    44,
       45,    46,    46,    46,    47,    48,    49,    49,    50,    50,
-      51,    52,    52,    52,    52,    52,    52,    53,    53,    53,
-      54,    54,    54,    55,    55,    56,    56,    56,    56,    57
+      51,    51,    52,    52,    52,    52,    52,    52,    53,    53,
+      53,    54,    54,    54,    55,    55,    56,    56,    56,    56,
+      57
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
@@ -722,8 +728,9 @@ static const yytype_int8 yyr2[] =
        0,     2,     4,     2,     2,     1,     2,     1,     1,     1,
        1,     1,     1,     1,     3,     3,     1,     2,     2,     3,
        8,     4,     2,     1,     7,    11,     3,     1,     3,     1,
-       3,     1,     1,     1,     1,     1,     1,     3,     3,     1,
-       3,     3,     1,     3,     1,     1,     1,     2,     3,     0
+       3,     3,     1,     1,     1,     1,     1,     1,     3,     3,
+       1,     3,     3,     1,     3,     1,     1,     1,     2,     3,
+       0
 };
 
 
@@ -1191,73 +1198,73 @@ yyreduce:
            {
                raiz = crearNodo(N_PROGRAMA, (yyvsp[-1].nodo), NULL, NULL, NULL);
            }
-#line 1195 "BMLang.tab.c"
+#line 1202 "BMLang.tab.c"
     break;
 
   case 3: /* bloque: sentencia otraSentencia  */
 #line 51 "BMLang.y"
                                    { (yyvsp[-1].nodo)->sig = (yyvsp[0].nodo); (yyval.nodo) = (yyvsp[-1].nodo); }
-#line 1201 "BMLang.tab.c"
+#line 1208 "BMLang.tab.c"
     break;
 
   case 4: /* otraSentencia: sentencia otraSentencia  */
 #line 54 "BMLang.y"
                                           { (yyvsp[-1].nodo)->sig = (yyvsp[0].nodo); (yyval.nodo) = (yyvsp[-1].nodo); }
-#line 1207 "BMLang.tab.c"
+#line 1214 "BMLang.tab.c"
     break;
 
   case 5: /* otraSentencia: vacio  */
 #line 55 "BMLang.y"
                                           { (yyval.nodo) = NULL; }
-#line 1213 "BMLang.tab.c"
+#line 1220 "BMLang.tab.c"
     break;
 
   case 6: /* sentencia: opciones PUNTOYCOMA  */
 #line 58 "BMLang.y"
                                   { (yyval.nodo) = (yyvsp[-1].nodo); }
-#line 1219 "BMLang.tab.c"
+#line 1226 "BMLang.tab.c"
     break;
 
   case 7: /* sentencia: condicional  */
 #line 59 "BMLang.y"
                                   { (yyval.nodo) = (yyvsp[0].nodo); }
-#line 1225 "BMLang.tab.c"
+#line 1232 "BMLang.tab.c"
     break;
 
   case 8: /* sentencia: mientras  */
 #line 60 "BMLang.y"
                                   { (yyval.nodo) = (yyvsp[0].nodo); }
-#line 1231 "BMLang.tab.c"
+#line 1238 "BMLang.tab.c"
     break;
 
   case 9: /* sentencia: para  */
 #line 61 "BMLang.y"
                                   { (yyval.nodo) = (yyvsp[0].nodo); }
-#line 1237 "BMLang.tab.c"
+#line 1244 "BMLang.tab.c"
     break;
 
   case 10: /* opciones: declaracion  */
 #line 64 "BMLang.y"
                          { (yyval.nodo) = (yyvsp[0].nodo); }
-#line 1243 "BMLang.tab.c"
+#line 1250 "BMLang.tab.c"
     break;
 
   case 11: /* opciones: lectura  */
 #line 65 "BMLang.y"
                          { (yyval.nodo) = (yyvsp[0].nodo); }
-#line 1249 "BMLang.tab.c"
+#line 1256 "BMLang.tab.c"
     break;
 
   case 12: /* opciones: escritura  */
 #line 66 "BMLang.y"
                          { (yyval.nodo) = (yyvsp[0].nodo); }
-#line 1255 "BMLang.tab.c"
+#line 1262 "BMLang.tab.c"
     break;
 
   case 13: /* opciones: asignacion  */
 #line 67 "BMLang.y"
                          { (yyval.nodo) = (yyvsp[0].nodo); }
-#line 1261 "BMLang.tab.c"
+#line 1268 "BMLang.tab.c"
     break;
 
   case 14: /* declaracion: DEC IDENTIFICADOR otraVariable  */
@@ -1267,7 +1274,7 @@ yyreduce:
                     v->sig = (yyvsp[0].nodo);
                     (yyval.nodo) = crearNodo(N_DECLARACION, v, NULL, NULL, NULL);
                 }
-#line 1271 "BMLang.tab.c"
+#line 1278 "BMLang.tab.c"
     break;
 
   case 15: /* otraVariable: COMA IDENTIFICADOR otraVariable  */
@@ -1277,209 +1284,215 @@ yyreduce:
                      v->sig = (yyvsp[0].nodo);
                      (yyval.nodo) = v;
                  }
-#line 1281 "BMLang.tab.c"
+#line 1288 "BMLang.tab.c"
     break;
 
   case 16: /* otraVariable: vacio  */
 #line 84 "BMLang.y"
                        { (yyval.nodo) = NULL; }
-#line 1287 "BMLang.tab.c"
+#line 1294 "BMLang.tab.c"
     break;
 
   case 17: /* lectura: READ IDENTIFICADOR  */
 #line 88 "BMLang.y"
             { (yyval.nodo) = crearNodo(N_READ, nodoVariable((yyvsp[0].nombre)), NULL, NULL, NULL); }
-#line 1293 "BMLang.tab.c"
+#line 1300 "BMLang.tab.c"
     break;
 
   case 18: /* escritura: WRITE IDENTIFICADOR  */
 #line 92 "BMLang.y"
               { (yyval.nodo) = crearNodo(N_WRITE, nodoVariable((yyvsp[0].nombre)), NULL, NULL, NULL); }
-#line 1299 "BMLang.tab.c"
+#line 1306 "BMLang.tab.c"
     break;
 
   case 19: /* asignacion: IDENTIFICADOR ASIGNACION expresion  */
 #line 96 "BMLang.y"
                { (yyval.nodo) = crearNodo(N_ASIGNACION, nodoVariable((yyvsp[-2].nombre)), (yyvsp[0].nodo), NULL, NULL); }
-#line 1305 "BMLang.tab.c"
+#line 1312 "BMLang.tab.c"
     break;
 
   case 20: /* condicional: IF PARENTESIS_ABRIR condicion PARENTESIS_CERRAR LLAVE_ABRIR bloque LLAVE_CERRAR otroElse  */
 #line 100 "BMLang.y"
                 { (yyval.nodo) = crearNodo(N_IF, (yyvsp[-5].nodo), (yyvsp[-2].nodo), (yyvsp[0].nodo), NULL); }
-#line 1311 "BMLang.tab.c"
+#line 1318 "BMLang.tab.c"
     break;
 
   case 21: /* otroElse: ELSE LLAVE_ABRIR bloque LLAVE_CERRAR  */
 #line 103 "BMLang.y"
                                                   { (yyval.nodo) = (yyvsp[-1].nodo); }
-#line 1317 "BMLang.tab.c"
+#line 1324 "BMLang.tab.c"
     break;
 
   case 22: /* otroElse: ELSE condicional  */
 #line 104 "BMLang.y"
                                                   { (yyval.nodo) = (yyvsp[0].nodo); }
-#line 1323 "BMLang.tab.c"
+#line 1330 "BMLang.tab.c"
     break;
 
   case 23: /* otroElse: vacio  */
 #line 105 "BMLang.y"
                                                   { (yyval.nodo) = NULL; }
-#line 1329 "BMLang.tab.c"
+#line 1336 "BMLang.tab.c"
     break;
 
   case 24: /* mientras: WHILE PARENTESIS_ABRIR condicion PARENTESIS_CERRAR LLAVE_ABRIR bloque LLAVE_CERRAR  */
 #line 109 "BMLang.y"
              { (yyval.nodo) = crearNodo(N_WHILE, (yyvsp[-4].nodo), (yyvsp[-1].nodo), NULL, NULL); }
-#line 1335 "BMLang.tab.c"
+#line 1342 "BMLang.tab.c"
     break;
 
   case 25: /* para: FOR PARENTESIS_ABRIR asignacion PUNTOYCOMA condicion PUNTOYCOMA asignacion PARENTESIS_CERRAR LLAVE_ABRIR bloque LLAVE_CERRAR  */
 #line 113 "BMLang.y"
          { (yyval.nodo) = crearNodo(N_FOR, (yyvsp[-8].nodo), (yyvsp[-6].nodo), (yyvsp[-4].nodo), (yyvsp[-1].nodo)); }
-#line 1341 "BMLang.tab.c"
+#line 1348 "BMLang.tab.c"
     break;
 
   case 26: /* condicion: condicion OR conjuncion  */
 #line 116 "BMLang.y"
                                       { (yyval.nodo) = crearNodo(N_OR, (yyvsp[-2].nodo), (yyvsp[0].nodo), NULL, NULL); }
-#line 1347 "BMLang.tab.c"
+#line 1354 "BMLang.tab.c"
     break;
 
   case 27: /* condicion: conjuncion  */
 #line 117 "BMLang.y"
                                       { (yyval.nodo) = (yyvsp[0].nodo); }
-#line 1353 "BMLang.tab.c"
+#line 1360 "BMLang.tab.c"
     break;
 
   case 28: /* conjuncion: conjuncion AND comparacion  */
 #line 120 "BMLang.y"
                                           { (yyval.nodo) = crearNodo(N_AND, (yyvsp[-2].nodo), (yyvsp[0].nodo), NULL, NULL); }
-#line 1359 "BMLang.tab.c"
+#line 1366 "BMLang.tab.c"
     break;
 
   case 29: /* conjuncion: comparacion  */
 #line 121 "BMLang.y"
                                           { (yyval.nodo) = (yyvsp[0].nodo); }
-#line 1365 "BMLang.tab.c"
+#line 1372 "BMLang.tab.c"
     break;
 
   case 30: /* comparacion: expresion operador expresion  */
 #line 125 "BMLang.y"
                 { (yyval.nodo) = nodoComparacion((yyvsp[-1].valor), (yyvsp[-2].nodo), (yyvsp[0].nodo)); }
-#line 1371 "BMLang.tab.c"
+#line 1378 "BMLang.tab.c"
     break;
 
-  case 31: /* operador: MENOR  */
-#line 128 "BMLang.y"
-                        { (yyval.valor) = OP_MENOR; }
-#line 1377 "BMLang.tab.c"
+  case 31: /* comparacion: PARENTESIS_ABRIR condicion PARENTESIS_CERRAR  */
+#line 127 "BMLang.y"
+                { (yyval.nodo) = (yyvsp[-1].nodo); }
+#line 1384 "BMLang.tab.c"
     break;
 
-  case 32: /* operador: MAYOR  */
-#line 129 "BMLang.y"
-                        { (yyval.valor) = OP_MAYOR; }
-#line 1383 "BMLang.tab.c"
-    break;
-
-  case 33: /* operador: MENORIGUAL  */
+  case 32: /* operador: MENOR  */
 #line 130 "BMLang.y"
-                        { (yyval.valor) = OP_MENORIGUAL; }
-#line 1389 "BMLang.tab.c"
+                        { (yyval.valor) = OP_MENOR; }
+#line 1390 "BMLang.tab.c"
     break;
 
-  case 34: /* operador: MAYORIGUAL  */
+  case 33: /* operador: MAYOR  */
 #line 131 "BMLang.y"
-                        { (yyval.valor) = OP_MAYORIGUAL; }
-#line 1395 "BMLang.tab.c"
+                        { (yyval.valor) = OP_MAYOR; }
+#line 1396 "BMLang.tab.c"
     break;
 
-  case 35: /* operador: IGUAL  */
+  case 34: /* operador: MENORIGUAL  */
 #line 132 "BMLang.y"
-                        { (yyval.valor) = OP_IGUAL; }
-#line 1401 "BMLang.tab.c"
+                        { (yyval.valor) = OP_MENORIGUAL; }
+#line 1402 "BMLang.tab.c"
     break;
 
-  case 36: /* operador: DIFERENTE  */
+  case 35: /* operador: MAYORIGUAL  */
 #line 133 "BMLang.y"
-                        { (yyval.valor) = OP_DIFERENTE; }
-#line 1407 "BMLang.tab.c"
+                        { (yyval.valor) = OP_MAYORIGUAL; }
+#line 1408 "BMLang.tab.c"
     break;
 
-  case 37: /* expresion: expresion MAS termino  */
+  case 36: /* operador: IGUAL  */
+#line 134 "BMLang.y"
+                        { (yyval.valor) = OP_IGUAL; }
+#line 1414 "BMLang.tab.c"
+    break;
+
+  case 37: /* operador: DIFERENTE  */
 #line 135 "BMLang.y"
-                                       { (yyval.nodo) = nodoOp('+', (yyvsp[-2].nodo), (yyvsp[0].nodo)); }
-#line 1413 "BMLang.tab.c"
+                        { (yyval.valor) = OP_DIFERENTE; }
+#line 1420 "BMLang.tab.c"
     break;
 
-  case 38: /* expresion: expresion MENOS termino  */
-#line 136 "BMLang.y"
-                                       { (yyval.nodo) = nodoOp('-', (yyvsp[-2].nodo), (yyvsp[0].nodo)); }
-#line 1419 "BMLang.tab.c"
-    break;
-
-  case 39: /* expresion: termino  */
+  case 38: /* expresion: expresion MAS termino  */
 #line 137 "BMLang.y"
+                                       { (yyval.nodo) = nodoOp('+', (yyvsp[-2].nodo), (yyvsp[0].nodo)); }
+#line 1426 "BMLang.tab.c"
+    break;
+
+  case 39: /* expresion: expresion MENOS termino  */
+#line 138 "BMLang.y"
+                                       { (yyval.nodo) = nodoOp('-', (yyvsp[-2].nodo), (yyvsp[0].nodo)); }
+#line 1432 "BMLang.tab.c"
+    break;
+
+  case 40: /* expresion: termino  */
+#line 139 "BMLang.y"
                                        { (yyval.nodo) = (yyvsp[0].nodo); }
-#line 1425 "BMLang.tab.c"
+#line 1438 "BMLang.tab.c"
     break;
 
-  case 40: /* termino: termino POR potenciacion  */
-#line 140 "BMLang.y"
-                                       { (yyval.nodo) = nodoOp('*', (yyvsp[-2].nodo), (yyvsp[0].nodo)); }
-#line 1431 "BMLang.tab.c"
-    break;
-
-  case 41: /* termino: termino DIVIDIR potenciacion  */
-#line 141 "BMLang.y"
-                                       { (yyval.nodo) = nodoOp('/', (yyvsp[-2].nodo), (yyvsp[0].nodo)); }
-#line 1437 "BMLang.tab.c"
-    break;
-
-  case 42: /* termino: potenciacion  */
+  case 41: /* termino: termino POR potenciacion  */
 #line 142 "BMLang.y"
+                                       { (yyval.nodo) = nodoOp('*', (yyvsp[-2].nodo), (yyvsp[0].nodo)); }
+#line 1444 "BMLang.tab.c"
+    break;
+
+  case 42: /* termino: termino DIVIDIR potenciacion  */
+#line 143 "BMLang.y"
+                                       { (yyval.nodo) = nodoOp('/', (yyvsp[-2].nodo), (yyvsp[0].nodo)); }
+#line 1450 "BMLang.tab.c"
+    break;
+
+  case 43: /* termino: potenciacion  */
+#line 144 "BMLang.y"
                                        { (yyval.nodo) = (yyvsp[0].nodo); }
-#line 1443 "BMLang.tab.c"
+#line 1456 "BMLang.tab.c"
     break;
 
-  case 43: /* potenciacion: factor POTENCIA potenciacion  */
-#line 145 "BMLang.y"
+  case 44: /* potenciacion: factor POTENCIA potenciacion  */
+#line 147 "BMLang.y"
                                             { (yyval.nodo) = nodoOp(':', (yyvsp[-2].nodo), (yyvsp[0].nodo)); }
-#line 1449 "BMLang.tab.c"
+#line 1462 "BMLang.tab.c"
     break;
 
-  case 44: /* potenciacion: factor  */
-#line 146 "BMLang.y"
+  case 45: /* potenciacion: factor  */
+#line 148 "BMLang.y"
                                             { (yyval.nodo) = (yyvsp[0].nodo); }
-#line 1455 "BMLang.tab.c"
+#line 1468 "BMLang.tab.c"
     break;
 
-  case 45: /* factor: IDENTIFICADOR  */
-#line 149 "BMLang.y"
-                         { (yyval.nodo) = nodoVariable((yyvsp[0].nombre)); }
-#line 1461 "BMLang.tab.c"
-    break;
-
-  case 46: /* factor: NUMERO  */
-#line 150 "BMLang.y"
-                         { (yyval.nodo) = nodoNumero((yyvsp[0].valor)); }
-#line 1467 "BMLang.tab.c"
-    break;
-
-  case 47: /* factor: MENOS factor  */
+  case 46: /* factor: IDENTIFICADOR  */
 #line 151 "BMLang.y"
-                         { (yyval.nodo) = crearNodo(N_NEGACION, (yyvsp[0].nodo), NULL, NULL, NULL); }
-#line 1473 "BMLang.tab.c"
+                         { (yyval.nodo) = nodoVariable((yyvsp[0].nombre)); }
+#line 1474 "BMLang.tab.c"
     break;
 
-  case 48: /* factor: PARENTESIS_ABRIR expresion PARENTESIS_CERRAR  */
+  case 47: /* factor: NUMERO  */
 #line 152 "BMLang.y"
+                         { (yyval.nodo) = nodoNumero((yyvsp[0].valor)); }
+#line 1480 "BMLang.tab.c"
+    break;
+
+  case 48: /* factor: MENOS factor  */
+#line 153 "BMLang.y"
+                         { (yyval.nodo) = crearNodo(N_NEGACION, (yyvsp[0].nodo), NULL, NULL, NULL); }
+#line 1486 "BMLang.tab.c"
+    break;
+
+  case 49: /* factor: PARENTESIS_ABRIR expresion PARENTESIS_CERRAR  */
+#line 154 "BMLang.y"
                                                       { (yyval.nodo) = (yyvsp[-1].nodo); }
-#line 1479 "BMLang.tab.c"
+#line 1492 "BMLang.tab.c"
     break;
 
 
-#line 1483 "BMLang.tab.c"
+#line 1496 "BMLang.tab.c"
 
       default: break;
     }
@@ -1672,7 +1685,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 156 "BMLang.y"
+#line 158 "BMLang.y"
 
 
  /* Entrada del programa y mensajes de error */
@@ -1779,112 +1792,60 @@ static void sugerencia(int lineaError) {
     }
 }
 
-int main(int argc, char **argv) {
-
+int main(int argc, char **argv){
     const char *archivo = NULL;
-
-    int verArbol = 0;
-    int verTAC = 0;
+    int verArbol = 0, verTAC = 0;
     int verNASM = 0;
-    int verTokens = 0;
-
     FILE *entrada = stdin;
     int r;
 
-    // Procesar argumentos
     for (int i = 1; i < argc; i++) {
-
         if (strcmp(argv[i], "--ast") == 0) {
             verArbol = 1;
-
         } else if (strcmp(argv[i], "--tac") == 0) {
             verTAC = 1;
-
         } else if (strcmp(argv[i], "--nasm") == 0) {
             verNASM = 1;
-
-        } else if (strcmp(argv[i], "--tokens") == 0) {
-            verTokens = 1;
-
         } else {
             archivo = argv[i];
         }
-    }
+}
 
-    // Abrir archivo fuente
     if (archivo != NULL) {
-
         entrada = fopen(archivo, "rb");
-
         if (entrada == NULL) {
             printf("No se pudo abrir el archivo %s\n", archivo);
             return 2;
         }
     }
-
-    // Leer código fuente
     fuente = leerTodo(entrada);
+    if (entrada != stdin) fclose(entrada);
 
-    if (entrada != stdin) {
-        fclose(entrada);
-    }
-
-    // Preparar entrada para Flex
-    yy_scan_string(fuente);
-
-    // MODO ANALIZADOR LEXICO
-    if (verTokens) {
-
-        registrarTokens = 1;
-        linea = 1;
-
-        while (yylex() != 0) {
-            // Flex imprime cada token reconocido.
-        }
-
-        registrarTokens = 0;
-
-        free(fuente);
-
-        return 0;
-    }
-
-    // Análisis sintáctico normal
+    yy_scan_string(fuente);                 
     r = yyparse();
-
-    if (r != 0) {
-        free(fuente);
-        return r;
-    }
-
-    // Generación NASM
+    if (r != 0) return r;
     if (verNASM) {
-        r = generarNASM(raiz);
-        free(fuente);
-        return r;
-    }
-
-    printf("Cadena valida\n");
-
-    // Mostrar AST
-    if (verArbol) {
-        imprimirArbol(raiz, 0);
-    }
-
-    // Generar TAC
-    if (verTAC) {
-        r = generarTAC(raiz, stdout);
-        free(fuente);
-        return r;
-    }
-
-    free(fuente);
-
+    return generarNASM(raiz);
     return 0;
+   
 }
 
-    
+        if (!verArbol && !verTAC) printf("Cadena valida\n");
 
+if (verArbol) {
+    imprimirArbol(raiz, 0);   /* modo --ast: lo usa la pestana AST del IDE */
+}
+
+if (verTAC) {
+    return generarTAC(raiz, stdout);
+}
+
+
+
+return 0;
+
+   
+}
 
 /* Bison llama a esta funcion cuando el programa no sigue la gramatica.
    yychar es el token con el que fallo, yytext su texto y linea la linea actual. */
