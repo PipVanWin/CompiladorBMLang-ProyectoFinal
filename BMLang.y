@@ -123,6 +123,8 @@ conjuncion : conjuncion AND comparacion   { $$ = crearNodo(N_AND, $1, $3, NULL, 
 
 comparacion : expresion operador expresion
                 { $$ = nodoComparacion($2, $1, $3); }
+            | PARENTESIS_ABRIR condicion PARENTESIS_CERRAR
+                { $$ = $2; }   /* condicion agrupada: IF (($a == 1) && ($b == 2)) */
             ;
 
 operador : MENOR        { $$ = OP_MENOR; }
@@ -298,6 +300,10 @@ int main(int argc, char **argv){
 }
 
         if (!verArbol && !verTAC) printf("Cadena valida\n");
+
+if (verArbol) {
+    imprimirArbol(raiz, 0);   /* modo --ast: lo usa la pestana AST del IDE */
+}
 
 if (verTAC) {
     return generarTAC(raiz, stdout);
